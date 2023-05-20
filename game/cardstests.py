@@ -232,6 +232,8 @@ class EKCardsTests(unittest.TestCase):
             "We set the future, so we should get the future!")
     
     def test_place_back_kitten(self):
+        """ Test if the insert_kitten function works the way it should. """
+
         cards = EKCards()
         cards.reset(5)
 
@@ -253,7 +255,30 @@ class EKCardsTests(unittest.TestCase):
         cards.insert_kitten(0, -1)
         self.assertTrue(np.all(cards.deck_ordered == -1),
             "-1 as index should mean insert exploding kitten in random place in deck")
+    
+    def test_get_state(self):
+        """ Tests if the get_state function its returned array is formatted like it should be. """
 
+        cards = EKCards()
+
+        for num_players in range(2, 6):
+            # Everything that has to do with cards:
+            cards.reset(num_players)
+            
+            # Randomly move two cards from deck to discard pile:
+            cards.random_pick(EKCards.DECK_IDX, EKCards.DISCARD_PILE_IDX)
+            cards.random_pick(EKCards.DECK_IDX, EKCards.DISCARD_PILE_IDX)
+
+            for player_idx in range(0, num_players):
+                state = cards.get_state(player_idx)
+                self.assertEqual(state[EKCards.DISCARD_PILE_IDX, 0], 2,
+                    "Must show that discard pile has 2 cards")
+                self.assertTrue(np.all(state[EKCards.FIRST_PLAYER_IDX:, 0] == 8),
+                    "Must show that all players have 8 cards")
+                self.assertEqual(np.sum(state[EKCards.FIRST_PLAYER_IDX + 1]), 16,
+                    "Players own cards should be visible, and put as second player (because first is player before him/her)")
+                self.assertTrue(np.all(state[EKCards.FIRST_PLAYER_IDX:, 1 + EKCardTypes.DEFUSE] >= 1),
+                    "It should know that all players still have their defuse.")
 
 if __name__ == "__main__":
     unittest.main()

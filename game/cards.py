@@ -120,7 +120,27 @@ class EKCards:
             gives known cards of all players after you.
         """
 
-        pass
+        shape = self.cards.shape
+        ret = np.zeros([shape[0], shape[1] + 1], dtype=np.int64)
+
+        # You can see how many cards other players have:
+        ret[:, 0] = np.sum(self.cards, axis = 1)
+
+        # And you might know some more stuff about other players:
+        ret[:, 1:] = self.known_map[player_idx]
+
+        # About yourself you know everything, ofc
+        ret[EKCards.FIRST_PLAYER_IDX + player_idx, 1:] = \
+            self.cards[EKCards.FIRST_PLAYER_IDX + player_idx]
+
+        # And the same goes for the discard pile:
+        ret[EKCards.DISCARD_PILE_IDX, 1:] = \
+            self.cards[EKCards.DISCARD_PILE_IDX]
+
+        # Now, rotate, such that you are always the second player:
+        ret[EKCards.FIRST_PLAYER_IDX:] = np.roll(ret[EKCards.FIRST_PLAYER_IDX:], -player_idx + 1, axis = 0)
+
+        return ret
     
     
     def deal_cards(self, extra_defuses: int):
