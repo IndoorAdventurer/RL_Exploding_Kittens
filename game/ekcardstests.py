@@ -1,5 +1,5 @@
 import unittest
-from cards import EKCards, EKCardTypes
+from ekcards import EKCards, EKCardTypes
 import numpy as np
 
 class EKCardsTests(unittest.TestCase):
@@ -279,6 +279,30 @@ class EKCardsTests(unittest.TestCase):
                     "Players own cards should be visible, and put as second player (because first is player before him/her)")
                 self.assertTrue(np.all(state[EKCards.FIRST_PLAYER_IDX:, 1 + EKCardTypes.DEFUSE] >= 1),
                     "It should know that all players still have their defuse.")
+    
+    def test_to_discard_pile_positive(self):
+        cards = EKCards()
+        cards.reset(5)
+
+        cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A] = 2
+        cards.known_pick(EKCards.FIRST_PLAYER_IDX, EKCards.DISCARD_PILE_IDX, EKCardTypes.CAT_A)
+        self.assertTrue(np.all(cards.known_map[:, EKCards.FIRST_PLAYER_IDX, EKCardTypes.DEFUSE] == 1),
+            "When placing a card on the discard pile, everyone should still know which cards you have that were already known")
+        cards.known_pick(EKCards.FIRST_PLAYER_IDX, EKCards.FIRST_PLAYER_IDX + 1, EKCardTypes.CAT_A)
+        self.assertTrue(np.all(cards.known_map[2:, EKCards.FIRST_PLAYER_IDX, EKCardTypes.DEFUSE] == 0),
+            "But if someone else takes it, this is not the case.")
+        self.assertEqual(cards.known_map[1, EKCards.FIRST_PLAYER_IDX, EKCardTypes.DEFUSE], 1,
+            "Then only the player who took it knows")
+    
+    def test_to_discard_pile_negative(self):
+        cards = EKCards()
+        cards.reset(5)
+
+        self.assertTrue(np.all(cards.known_map[:, EKCards.FIRST_PLAYER_IDX:, EKCardTypes.DEFUSE] == 1),
+            "At the start, again, everyone know that everyone has a defuse")
+        cards.known_pick(EKCards.FIRST_PLAYER_IDX, EKCards.DISCARD_PILE_IDX, EKCardTypes.DEFUSE)
+        self.assertTrue(np.all(cards.known_map[:, EKCards.FIRST_PLAYER_IDX, EKCardTypes.DEFUSE] == 0),
+            "But when someone uses their defuse, this is no longer the case")
 
 if __name__ == "__main__":
     unittest.main()

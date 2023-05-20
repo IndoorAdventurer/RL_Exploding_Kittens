@@ -90,7 +90,8 @@ class EKCards:
         # "known_map[3, 4, 5] == 2" means that player 3 knows that stack 4 has 2
         # cards of type 5. ❗*IMPORTANT* note that this does not tell what
         # anyone knows about him/herself.
-        self.known_map = np.zeros([num_players, num_stacks, EKCardTypes.NUM_TYPES], dtype=np.int64)
+        self.known_map = \
+            np.zeros([num_players, num_stacks, EKCardTypes.NUM_TYPES], dtype=np.int64)
 
         # Sometimes it is known what cards are where in the deck. We must
         # account for this, by keeping a list of known cards. The following
@@ -138,7 +139,8 @@ class EKCards:
             self.cards[EKCards.DISCARD_PILE_IDX]
 
         # Now, rotate, such that you are always the second player:
-        ret[EKCards.FIRST_PLAYER_IDX:] = np.roll(ret[EKCards.FIRST_PLAYER_IDX:], -player_idx + 1, axis = 0)
+        ret[EKCards.FIRST_PLAYER_IDX:] = \
+            np.roll(ret[EKCards.FIRST_PLAYER_IDX:], -player_idx + 1, axis = 0)
 
         return ret
     
@@ -215,9 +217,17 @@ class EKCards:
         self.cards[from_idx, picked_card] -= 1
         self.cards[to_idx, picked_card] += 1
 
+        # When a card is placed on the discard pile, everyone sees which card
+        # this is. If you knew that player had this card, you now know nothing,
+        # but if you know he/she has some other card, you still do:
+        if from_idx >= EKCards.FIRST_PLAYER_IDX and to_idx == EKCards.DISCARD_PILE_IDX:
+            self.known_map[:, from_idx, picked_card] -= 1
+            self.known_map = np.clip(self.known_map, 0, np.Inf)
+            return
+
         # If from_idx corresponds to a player, this player now knows that the
         # to_idx deck has one (more) of this card
-        if (from_idx >= EKCards.FIRST_PLAYER_IDX):
+        if from_idx >= EKCards.FIRST_PLAYER_IDX:
             player_idx = from_idx - EKCards.FIRST_PLAYER_IDX
             self.known_map[player_idx, to_idx, picked_card] += 1
         
@@ -227,7 +237,7 @@ class EKCards:
 
         # Only the player corresponding to to_idx knows a little more, so
         # partially undoing the above step here:
-        if (to_idx >= EKCards.FIRST_PLAYER_IDX):
+        if to_idx >= EKCards.FIRST_PLAYER_IDX:
             player_idx = to_idx - EKCards.FIRST_PLAYER_IDX
             self.known_map[player_idx, from_idx, :] += 1
             self.known_map[player_idx, from_idx, picked_card] -= 1
@@ -257,7 +267,8 @@ class EKCards:
             that is placing back the exploding kitten. The corresponding stack
             should contain an exploding kitten!
             placement_idx (int): where in the deck to place the kitten, ranging
-            from 0, till the size of the deck, or the size of the max knowns
+            from 0, till the size of the deck, or the size of the max knowns.
+            If -1 is given, the kitten is randomly placed.
         """
 
         self.known_pick(EKCards.FIRST_PLAYER_IDX +  player_idx,
