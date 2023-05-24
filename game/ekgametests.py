@@ -8,7 +8,7 @@ class EKGameTests(unittest.TestCase):
     def test_init(self):
         g = EKGame()
         g.reset(3)
-        [player, cards, action_history, mask] = g.get_state(long_form=True)
+        [player, reward, cards, action_history, mask] = g.get_state(long_form=True)
         normal = g.get_legal_actions(False)
         self.assertEqual(player, 0,
             "Player zero always is the one that starts. Thats why its player zero.. you know :-p")
@@ -53,6 +53,22 @@ class EKGameTests(unittest.TestCase):
                         global_ = g.player_centric_to_global(major, player_centric)
                         self.assertTrue(np.all(card == global_),
                             "player_centric_action_history and player_centric_to_global should kind of be each others inverses")
+    
+    def test_long_form_indeces(self):
+        g = EKGame()
+        for _ in range(10):
+            g.reset(3)
+            g.calc_legal_actions(0)
+            short_form = g.get_legal_actions(False)
+            long_form = g.get_legal_actions(True)
+            short_idx = 0
+
+            for idx in range(len(long_form)):
+                if long_form[idx] == 1:
+                    short_from_long = g.action_from_long_form(idx)
+                    self.assertTrue(np.all(short_form[short_idx] == short_from_long),
+                        "We should be able to get the short form action from an index into the long form array, if the value there is 1")
+                    short_idx += 1
 
 
 if __name__ == "__main__":
