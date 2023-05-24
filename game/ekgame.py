@@ -13,35 +13,34 @@ class EKActionVecDefs:
     play the NOPE card are encoded by all zeros!
     Moreover, when a player is the target of a FAVOR (i.e. he/she has to give
     a card of his/her choosing to someone else), all values should be zero,
-    except arr[TARGET_CARD], which should specify the card to give (i.e. 
+    except arr[TARGET_CARD], which should specify the card to give (i.e.
     `EKCardTypes` values).
     """
 
+    PLAYER = 0  # The player making the move
 
-    PLAYER = 0          # The player making the move
+    POINTER = 1  # For cards like GIFT, you have to pick a player to take
+    # a gift from. POINTER should then give the index of the
+    # player you picked (relative to self). In addition,
+    # when placing back a kitten, it should give the index
+    # to insert it (-1) for random.
 
-    POINTER = 1         # For cards like GIFT, you have to pick a player to take
-                        # a gift from. POINTER should then give the index of the
-                        # player you picked (relative to self). In addition,
-                        # when placing back a kitten, it should give the index
-                        # to insert it (-1) for random.
-    
-    TARGET_CARD = 2     # With GIFT or FAVOR, you have to select a card to give
-                        # or take. Thats what you use the val at this index for
-    
+    TARGET_CARD = 2  # With GIFT or FAVOR, you have to select a card to give
+    # or take. Thats what you use the val at this index for
+
     # Now one-hot encoded actions:
     PLAY_ATTACK = 3
-    PLAY_FAVOR = 4          # Needs to also set POINTER to a player
+    PLAY_FAVOR = 4  # Needs to also set POINTER to a player
     PLAY_NOPE = 5
     PLAY_SHUFFLE = 6
     PLAY_SKIP = 7
     PLAY_SEE_FUTURE = 8
-    PLAY_TWO_CATS = 9       # Needs to also set POINTER to a player
-    PLAY_THREE_CATS = 10    # NEEDS to set POINTER to a player, and TARGET_CARD 
-                            # to the card he/she wants.
+    PLAY_TWO_CATS = 9  # Needs to also set POINTER to a player
+    PLAY_THREE_CATS = 10  # NEEDS to set POINTER to a player, and TARGET_CARD
+    # to the card he/she wants.
     PLACE_BACK_KITTEN = 11
 
-    VEC_LEN = 12        # The length of an action vector.
+    VEC_LEN = 12  # The length of an action vector.
 
 
 class EKGame:
@@ -50,15 +49,13 @@ class EKGame:
     the game logic.
     """
 
-    ACTION_HORIZON_LEN = 10     # get_state includes this many of last actions
-
+    ACTION_HORIZON = 10  # See at most this many of the most recent actions
     MAX_PLAYERS = 5
 
     def __init__(self) -> None:
-        """ Constructor. Does not do mutch. """
+        """Constructor. Does not do much."""
         self.cards = EKCards()
-    
-    
+
     def reset(self, num_players: int):
         """
         Reset the game completely.
@@ -67,167 +64,251 @@ class EKGame:
             num_players (int): The number of players to put in the game. Minimum
             is 2, maximum is 5.
         """
-        
+
+        self.num_players = num_players
         self.cards.reset(num_players)
-        
-        self.last_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
 
-        self.major_round_player = 0         # The person whose turn it is.
+        # History of actions taken by self and others, with 0 most recent:
+        self.action_history = np.zeros([0, EKActionVecDefs.VEC_LEN])
 
-        # For going over players that can NOPE a move, or need to give a present
-        # to major turn player. It is None, or an array of shape N x 2, where
-        # arr[n, 0] is player index, and arr[n, 1] the action (nope or present)
-        self.minor_round_players = None
-        
-        # To give the next time get_state lands on them
-        self.reward_buffer = np.zeros(num_players)
+        self.major_player = 0  # The player who's turn it is currently
+        self.nope_player = -1  # The player who's turn it is to nope
+        self.action_noped = False  # If someone noped (or un-unnoped :-p)
+        self.unprocessed_action = None  # An action that will only be processed
+        # after everyone has had a chance to nope.
 
-        # After some plays ATTACK, the next player must draw two cards. If that
-        # player also plays ATTACK, the player after that must play 4 (thats max)
-        self.attack_cnt = 0
-    
+        self.legal_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
+        self.legal_actions_long = np.zeros([0], dtype=np.int64)
 
-    def get_state(self) -> tuple[int, np.ndarray, np.ndarray]:
+        # TODO logic for the attack card!
+
+    def update_state(self):
+        # TODO!
+
+        player = self.get_cur_player()
+        self.calc_legal_actions(player)
+
+    def get_state(
+        self, long_form: bool
+    ) -> tuple[int, np.ndarray, np.ndarray, np.ndarray]:
         """
-        For the current player, get the for him/her observable state
+        Returns the current visible state of the game for a specific player
 
         Returns:
-            A 3-tuple with the following elements:
-            1) A index of the current player, ranging from 0 to 4
-            2) Everything the player knows about its own and others' cards. See
-            `EKCards.get_state()` for more details.
-            3) The last so many actions taken in the game (by self and others).
-            Here, actions are sorted from most recent (idx 0) to least recent.
+            A tuple containing: (1) the index value of the current player, (2)
+            an numpy array describing the players cards and what it knows about
+            all the other cards, (3) the last N actions taken by self and other
+            players, (4) a list of possible actions. The format depends on the
+            `long_form` boolean argument given. See `EKGame.get_legal_actions`.
+        """
+        player_index = self.get_cur_player()
+        return [
+            player_index,
+            self.cards.get_state(player_index),
+            self.player_centric_action_history(player_index),
+            self.get_legal_actions(long_form)
+        ]
+
+    def take_action(self, player: int, action: int | np.ndarray):
+
+        if isinstance(action, int): # Convert all actions to same format:
+            action = self.action_from_long_form(action)
+        action = self.player_centric_to_global(player, action)
+
+        # Op het moment dat je de actie neemt, moet je de kaart al spelen en
+        # komt ie in de actions array. Maar pas in de update_state doen we het
+        # effect van de kaart, zodat er kans is om te nopen!
+
+        # Also responsible for converting back to global player indeces instead of player centric ones
+        pass
+
+    def get_cur_player(self) -> int:
+        """Returns the player who should take an action next"""
+        if self.nope_player != -1:
+            return self.nope_player
+        if False:  # TODO here add condition for if it is a responder to gift!
+            return 1
+        return self.major_player
+
+    def get_legal_actions(self, long_form: bool) -> np.ndarray:
+        """
+        Returns a numpy array describing what actions are legal for the current
+        player in the current state. If `long_form` is `True`, it returns a
+        binary mask, where only legal actions are set to 1. If it is `False`, it
+        returns an array of possible actions, as specified by the
+        `EKActionVecDefs` class/enum.
+        """
+        if long_form:
+            return self.legal_actions_long
+        return self.legal_actions
+
+    def calc_legal_actions(self, player: int):
+        """
+        Initializes self.legal_actions and self.legal_actions_long with the
+        actions that are legal to take for the current player (`player` arg)
         """
 
-        player = self.major_round_player if self.minor_round_players == None \
-            else self.minor_round_players[0, 0]
-        cards = self.cards.get_state(player)
-        actions = self.last_actions.copy()
-        # Actions should always be with yourself at idx 1, player before at idx 0
-        actions[:, 0] = np.mod(actions[:, 0] + 1 - player, self.cards.num_players)
-        return (player, cards, actions)
+        self.legal_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
+        self.legal_actions_long = np.zeros([0], dtype=np.int64)
 
-    def get_possible_actions(self, long_form: bool) -> np.ndarray:
-        """
-        Get a list of all actions that are legal in the current game state
+        cards = self.cards.cards[player]
 
-        Args:
-            long_form (bool): If `False`, returns an `N x VEC_LEN` (See 
-            `EKActionVecDefs`) array, containing the N actions that are currently
-            legal to take. This is the same format as the `actions` array of
-            previously taken actions returned in the `get_state` method.
-            If it is `True`, it returns an 82-dimensional array, serving as a
-            binary mask over illegal actions. This option can be chosen when
-            implementing a model that, for example, returns a Q-value for each
-            of the 82 possible actions (of which only a fraction is legal at any
-            time).
-        
-        Returns:
-            A representation of the legal actions. The from depends on the
-            long_form boolean argument given. See above.
-        """
-        
-        self.actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
-        self.long_form = np.zeros(0)
+        # Precondition for most actions is that we are the major player and that
+        # there are no exploding kittens in the own deck:
+        is_major = player == self.major_player
+        major_and_no_ek = is_major and cards[EKCardTypes.EXPL_KITTEN] == 0
 
         # All relative player indeces, except yourself (at idx 1):
         legal_others = np.arange(EKGame.MAX_PLAYERS)
         legal_others = np.delete(legal_others, 1)
 
-        # If we are in a minor round, then we should ignore al major actions:
-        conditions_good = self.minor_round_players == None
-
-        player_idx = self.major_round_player if conditions_good \
-            else self.minor_round_players[0, 0]
-        cards = self.cards.cards[EKCards.FIRST_PLAYER_IDX + player_idx]
-
-        # You can always decide to not take action, except when receiving gift:
-        is_possible = conditions_good or \
-            self.minor_round_players[0, 1] != EKActionVecDefs.PLAY_FAVOR
-        if is_possible:
-            arr = np.zeros(EKActionVecDefs.VEC_LEN)
-            arr[EKActionVecDefs.PLAYER] = 1
-            self.actions = np.append(self.actions, [arr], axis=0)
-        self.long_form = np.append(self.long_form, is_possible)
-
-        # An auxilary function for appending most actions:
-        def action_aux(card: int, action: int, ptr: int = 0, target: int = 0, th: int = 1):
-            is_possible = conditions_good and cards[card] >= th and \
-                ptr < self.cards.num_players
-            if is_possible:
-                arr = np.zeros(EKActionVecDefs.VEC_LEN)
-                arr[EKActionVecDefs.PLAYER] = 1
-                arr[EKActionVecDefs.POINTER] = ptr
-                arr[EKActionVecDefs.TARGET_CARD] = target
-                arr[action] = 1
-                self.actions = np.append(self.actions, [arr], axis=0)
-            self.long_form = np.append(self.long_form, is_possible)
-    
-        action_aux(EKCardTypes.ATTACK, EKActionVecDefs.PLAY_ATTACK)
+        # Most actions associated to cards:
+        self.push_legal_action(
+            major_and_no_ek, cards, EKCardTypes.ATTACK, EKActionVecDefs.PLAY_ATTACK
+        )
         for p_idx in legal_others:
-            action_aux(EKCardTypes.FAVOR, EKActionVecDefs.PLAY_FAVOR, p_idx)
-        action_aux(EKCardTypes.SHUFFLE, EKActionVecDefs.PLAY_SHUFFLE)
-        action_aux(EKCardTypes.SKIP, EKActionVecDefs.PLAY_SKIP)
-        action_aux(EKCardTypes.SEE_FUTURE, EKActionVecDefs.PLAY_SEE_FUTURE)
-        
+            self.push_legal_action(
+                major_and_no_ek and p_idx < self.num_players,
+                cards,
+                EKCardTypes.FAVOR,
+                EKActionVecDefs.PLAY_FAVOR,
+                p_idx,
+            )
+        self.push_legal_action(
+            major_and_no_ek, cards, EKCardTypes.SHUFFLE, EKActionVecDefs.PLAY_SHUFFLE
+        )
+        self.push_legal_action(
+            major_and_no_ek, cards, EKCardTypes.SKIP, EKActionVecDefs.PLAY_SKIP
+        )
+        self.push_legal_action(
+            major_and_no_ek,
+            cards,
+            EKCardTypes.SEE_FUTURE,
+            EKActionVecDefs.PLAY_SEE_FUTURE,
+        )
+
+        # Finding the cat card (CAT_A, to CAT_E) we have the most of:
         cats_mask = np.zeros_like(cards)
-        cats_mask[EKCardTypes.CAT_A:] = 1
+        cats_mask[EKCardTypes.CAT_A :] = 1
         max_cats_card = np.argmax(cards * cats_mask)
 
+        # Adding all actions related to having two or three cat cards of same:
         for p_idx in legal_others:
-            action_aux(max_cats_card, EKActionVecDefs.PLAY_TWO_CATS, p_idx, 0, 2)
-
+            self.push_legal_action(
+                major_and_no_ek and p_idx < self.num_players,
+                cards,
+                max_cats_card,
+                EKActionVecDefs.PLAY_TWO_CATS,
+                p_idx,
+                0,
+                2,
+            )
             for c_idx in range(1, EKCardTypes.NUM_TYPES):
-                action_aux(max_cats_card, EKActionVecDefs.PLAY_THREE_CATS, p_idx, c_idx, 3)
-        
-        for d_idx in range(-1, EKCards.INIT_DECK_ORDERED_LEN):
-            action_aux(EKCardTypes.EXPL_KITTEN, EKActionVecDefs.PLACE_BACK_KITTEN, d_idx)
-        
-        # For rest of actions we should be in a minor round:
-        tmp_bool = self.minor_round_players != None
-        minor_action = player_idx = self.major_round_player if conditions_good \
-            else self.minor_round_players[0, 1]
+                self.push_legal_action(
+                    major_and_no_ek and p_idx < self.num_players,
+                    cards,
+                    max_cats_card,
+                    EKActionVecDefs.PLAY_THREE_CATS,
+                    p_idx,
+                    0,
+                    3,
+                )
 
-        # Action should be specifided as PLAY_NOPE if we want to play nope
-        conditions_good = tmp_bool and minor_action == EKActionVecDefs.PLAY_NOPE
-        action_aux(EKCardTypes.NOPE, EKActionVecDefs.PLAY_NOPE)
+        # Placing back an exploding kitten:
+        for deck_idx in range(-1, EKCards.INIT_DECK_ORDERED_LEN):
+            self.push_legal_action(
+                is_major,
+                cards,
+                EKCardTypes.EXPL_KITTEN,
+                EKActionVecDefs.PLACE_BACK_KITTEN,
+                deck_idx,
+            )
 
-        # Action should be PLAY_FAVOR if we must return a favor to major
-        conditions_good = tmp_bool and minor_action == EKActionVecDefs.PLAY_FAVOR
+        # Play nope card when its the kind of game where it is not your turn:
+        self.push_legal_action(
+            player == self.nope_player,
+            cards,
+            EKCardTypes.NOPE,
+            EKActionVecDefs.PLAY_NOPE,
+        )
+
+        # If we are not the major player, and we are not a nope player, we must
+        # be the target of a FAVOR card someone else played:
         for c_idx in range(1, EKCardTypes.NUM_TYPES):
-            if conditions_good:
-                arr = np.zeros(EKActionVecDefs.VEC_LEN)
-                arr[EKActionVecDefs.PLAYER] = 1
-                arr[EKActionVecDefs.TARGET_CARD] = c_idx
-                self.actions = np.append(self.actions, [arr], axis=0)
-            self.long_form = np.append(self.long_form, conditions_good)
-        
-        if long_form:
-            return self.long_form.copy()
-        
-        actions =  self.actions.copy()
-        return actions
+            self.push_legal_action(
+                not is_major and player != self.nope_player,
+                cards,
+                EKCardTypes.FAVOR,
+                -1,
+                0,
+                c_idx,
+                0,
+            )
 
-
-    def take_action(self, action: int | np.ndarray):
+    def push_legal_action(
+        self,
+        preconditions: bool,
+        cards: np.ndarray,
+        card: int,
+        action: int,
+        pointer: int = 0,
+        target: int = 0,
+        card_th: int = 1,
+    ):
         """
-        Accepts an action from a player, and updates the game accordingly.
+        Checks if an action would be legal, and pushes to array of legal actions
+        if so.
 
-        Arguments:
-            action (int or ndarray): If it is an int, it will interpret it as
-            the index into the 82-dimensional action space. If it is a numpy
-            array, it will interpret it as an action vector as specified in the
-            `EKActionVecDefs` class.
+        Args:
+            preconditions (bool): only even consider pushing if this is true
+            cards (np.ndarray): the stack of cards belonging to the cur player
+            card (EKCardTypes): the card associated with the action
+            card_th: (int): you need this many cards to be able to play action
+            action (EKActionVecDefs): the action itself. -1 for no action!
+            pointer (int): the optional pointer. Usually gives relative index of
+            another player, but sometimes something else.
+            target (int): the optional target. Points to a card. For example, a
+            card you want from someone, or want to give away to someone.
         """
-        pass
+        conditions_met = preconditions and cards[card] >= card_th
+        if conditions_met:
+            ac_vec = np.zeros(EKActionVecDefs.VEC_LEN)
+            ac_vec[EKActionVecDefs.PLAYER] = 1  # Always 1 because player centric
+            ac_vec[EKActionVecDefs.POINTER] = pointer
+            ac_vec[EKActionVecDefs.TARGET_CARD] = target
+            if action != -1:
+                ac_vec[action] = 1
+            self.legal_actions = np.append(self.legal_actions, [ac_vec], axis=0)
+        self.legal_actions_long = np.append(self.legal_actions_long, conditions_met)
+    
+    def action_from_long_form(self, idx) -> np.ndarray:
+        """ Return action corresponding to index into `legal_actions_long`. """
+        indeces = np.cumsum(self.legal_actions_long) - 1
+        return self.legal_actions[indeces[idx]]
+    
+    def player_centric_to_global(self, player: int, action: np.ndarray):
+        """ Players view everything player centric: they don't know their own
+        index, but instead think of themselves as index 1, the player before as
+        index 0, and the players after as index 1 to N. This function converts
+        actions players take back into a global point of view.
+        """
+        action[EKActionVecDefs.PLAYER] = player
+        if action[EKActionVecDefs.PLAY_FAVOR] == 1 or \
+                action[EKActionVecDefs.PLAY_TWO_CATS] == 1 or \
+                action[EKActionVecDefs.PLAY_THREE_CATS] == 1:
+            action[EKActionVecDefs.POINTER] = \
+                np.mod(action[EKActionVecDefs.POINTER] + player - 1, self.num_players)
 
-    def push_action(self, action: np.ndarray):
-        """ Push a taken action on the last_actions array, and make sure size 
-        limit not exceeded. """
-        if len(self.last_actions < EKGame.ACTION_HORIZON_LEN):
-            self.last_actions = np.insert(self.last_actions, 0, action, axis = 0)
-            return
-        
-        self.last_actions = np.roll(self.last_actions, 1, axis = 0)
-        self.last_actions[0] = action
+        return action
+    
+    def player_centric_action_history(self, player: int):
+        """ Converts the action history into a player centric form """
+        history = self.action_history.copy()
+        history[:, EKActionVecDefs.PLAYER] = \
+            np.mod(history[:, EKActionVecDefs.PLAYER] - player + 1, self.num_players)
+        mask = (history[:, EKActionVecDefs.PLAY_FAVOR] == 1) | \
+                (history[:, EKActionVecDefs.PLAY_TWO_CATS] == 1) | \
+                (history[:, EKActionVecDefs.PLAY_THREE_CATS] == 1)
+        history[mask, EKActionVecDefs.POINTER] = \
+            np.mod(history[:, EKActionVecDefs.POINTER] - player + 1, self.num_players)
+        return history
