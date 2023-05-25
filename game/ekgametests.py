@@ -28,12 +28,12 @@ class EKGameTests(unittest.TestCase):
             g.num_players = num_players
             for major in range(num_players):
                 for minor in range(num_players):
-                    nope = np.array([major, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0])
-                    attack = np.array([major, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
-                    favor = np.array([major, minor, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0])
-                    give_favor = np.array([major, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-                    two_cats = np.array([major, minor, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])
-                    three_cats = np.array([major, minor, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0])
+                    nope = np.array([major, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                    attack = np.array([major, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                    favor = np.array([major, minor, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                    give_favor = np.array([major, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                    two_cats = np.array([major, minor, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
+                    three_cats = np.array([major, minor, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
                     vanilla_cards = [nope, attack, give_favor]
                     cards_with_ptr = [favor, two_cats, three_cats]
                     for card in vanilla_cards:
