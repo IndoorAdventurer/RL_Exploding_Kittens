@@ -39,7 +39,7 @@ class EKActionVecDefs:
     PLAY_THREE_CATS = 10  # NEEDS to set POINTER to a player, and TARGET_CARD
     # to the card he/she wants.
     
-    PLACE_BACK_KITTEN = 11
+    DEFUSE_KITTEN = 11
 
     FUTURE_1 = 12   # For showing future to the player who requested future
     FUTURE_2 = 13
@@ -79,7 +79,7 @@ class EKGame:
         self.still_playing = np.ones(num_players, dtype=bool)
 
         # Reward to still return next time player gets turn:
-        self.reward_buffer = np.zeros(num_players, dtype=np.int64)
+        self.reward_buffer = np.zeros(num_players)
         self.reward = 0     # Actual reward to return
 
         # History of actions taken by self and others, with 0 most recent:
@@ -88,8 +88,8 @@ class EKGame:
         self.major_player = 0  # The player who's turn it is currently
         self.nope_player = -1  # The player who's turn it is to nope
         self.action_noped = False  # If someone noped (or un-unnoped :-p)
-        self.unprocessed_action = None  # An action that will only be processed
-        # after everyone has had a chance to nope.
+        self.unprocessed_action = np.zeros(0) # An action that will only be
+        # processed after everyone has had a chance to nope.
 
         self.legal_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
         self.legal_actions_long = np.zeros([0], dtype=np.int64)
@@ -109,6 +109,12 @@ class EKGame:
             
             # Set player to non playing:
             self.still_playing[player] = False
+
+            # Add to action history that player exploded:
+            acvec = np.zeros(EKActionVecDefs.VEC_LEN)
+            acvec[EKActionVecDefs.PLAYER] = player
+            acvec[EKActionVecDefs.TARGET_CARD] = -1 # I use this to signal it
+            self.push_action(acvec)
             
             # Give rewards and penalty:
             self.reward_buffer += EKGame.REWARD
@@ -126,7 +132,7 @@ class EKGame:
             return player
         
         # Check if the whole game is over because there is only 1 player left:
-        if np.sum(self.still_playing <= 1):
+        if np.sum(self.still_playing) <= 1:
             # Signal that the game is over by giving no possible acitons:
             self.legal_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
             self.legal_actions_long = np.zeros([0], dtype=np.int64)
@@ -189,7 +195,7 @@ class EKGame:
 
         # Player chose to not take any further actions, so either decided to
         # draw a card from deck or to not nope:
-        if np.all(action == 0):
+        if np.all(action[EKActionVecDefs.PLAYER + 1:] == 0):
             if player == self.nope_player:
                 self.nope_player = self.get_next_nope_idx()
                 return
@@ -213,6 +219,19 @@ class EKGame:
         # Every other type of action we register in the action history:
         self.push_action(action)
 
+        # Player played DEFUSE card:
+        if action[EKActionVecDefs.DEFUSE_KITTEN] == 1:
+            self.cards.known_pick(
+                EKCards.FIRST_PLAYER_IDX + player, EKCards.DISCARD_PILE_IDX,
+                EKCardTypes.DEFUSE)
+            self.cards.insert_kitten(player, int(action[EKActionVecDefs.POINTER]))
+            if (self.attack_count == 0):
+                self.major_player = self.get_next_major_idx()
+            else:
+                self.attack_count -= 1
+                self.attack_activated = False if self.attack_count == 0 else True
+            return
+        
         # Player played NOPE:
         if action[EKActionVecDefs.PLAY_NOPE] == 1:
             self.cards.known_pick(
@@ -221,6 +240,7 @@ class EKGame:
             self.action_noped = not self.action_noped
             self.nope_player = -1
             self.nope_player = self.get_next_nope_idx()
+            return
 
         # Player is the target of a PLAY_FAVOR:
         if player != self.major_player and action[EKActionVecDefs.PLAY_FAVOR]:
@@ -229,7 +249,7 @@ class EKGame:
             to = EKCards.FIRST_PLAYER_IDX + \
                 self.unprocessed_action[EKActionVecDefs.PLAYER]
             self.cards.known_pick(frm, to, card)
-            self.unprocessed_action = None
+            self.unprocessed_action = np.zeros(0)
             return
 
         # For all other actions we must give everyone chance to NOPE:
@@ -246,7 +266,7 @@ class EKGame:
         # let the target of that card respond, and finally let major player play
         if self.nope_player != -1:
             return self.nope_player
-        if self.unprocessed_action != None and \
+        if len(self.unprocessed_action) != 0 and \
                 self.unprocessed_action[EKActionVecDefs.PLAY_FAVOR] == 1:
             return self.unprocessed_action[EKActionVecDefs.POINTER]
         return self.major_player
@@ -346,12 +366,14 @@ class EKGame:
                 )
 
         # Placing back an exploding kitten:
+        deck_len = np.sum(self.cards.cards[EKCards.DECK_IDX])
         for deck_idx in range(-1, EKCards.INIT_DECK_ORDERED_LEN):
             self.push_legal_action(
-                is_major,
+                # idx can also be equal because after its placed deck will be longer:
+                is_major and cards[EKCardTypes.EXPL_KITTEN] > 0 and deck_idx <= deck_len,
                 cards,
-                EKCardTypes.EXPL_KITTEN,
-                EKActionVecDefs.PLACE_BACK_KITTEN,
+                EKCardTypes.DEFUSE,
+                EKActionVecDefs.DEFUSE_KITTEN,
                 deck_idx,
             )
 
@@ -486,26 +508,29 @@ class EKGame:
         """ Converts the action history into a player centric form """
 
         # Filter out all observed futures for other players than current one:
-        mask = (
+        future_mask = (
             (self.action_history[:, EKActionVecDefs.FUTURE_1] == 0) &
             (self.action_history[:, EKActionVecDefs.FUTURE_2] == 0) &
             (self.action_history[:, EKActionVecDefs.FUTURE_3] == 0)) | \
         (self.action_history[:, EKActionVecDefs.PLAYER] == player)
 
-        history = self.action_history[mask].copy()
+        history = self.action_history[future_mask].copy()
         history[:, EKActionVecDefs.PLAYER] = \
             np.mod(history[:, EKActionVecDefs.PLAYER] - player + 1, self.num_players)
-        mask = (history[:, EKActionVecDefs.PLAY_FAVOR] == 1) | \
+        
+        # Also do the same for actions that take a pointer argument:
+        haspointer_mask = (history[:, EKActionVecDefs.PLAY_FAVOR] == 1) | \
                 (history[:, EKActionVecDefs.PLAY_TWO_CATS] == 1) | \
                 (history[:, EKActionVecDefs.PLAY_THREE_CATS] == 1)
-        history[mask, EKActionVecDefs.POINTER] = \
-            np.mod(history[:, EKActionVecDefs.POINTER] - player + 1, self.num_players)
+        history[haspointer_mask, EKActionVecDefs.POINTER] = \
+            np.mod(history[haspointer_mask, EKActionVecDefs.POINTER] -
+                   player + 1, self.num_players)
         return history
 
     def push_action(self, action: np.ndarray):
         """ Push a taken action on the action_history array, and make sure size 
         limit is not exceeded. """
-        if len(self.action_history < EKGame.ACTION_HORIZON):
+        if len(self.action_history) < EKGame.ACTION_HORIZON:
             self.action_history = np.insert(self.action_history, 0, action, axis = 0)
             return
 
@@ -514,10 +539,13 @@ class EKGame:
 
     def process_action(self, player: int):
         """ Process the `self.unprocessed_action` """
-        # Check if we can ignore unprocessed action:
-        if player != self.major_player or self.unprocessed_action == None or \
-                self.action_noped:
-            self.unprocessed_action = None
+        # If we are not the major player, we ignore:
+        if player != self.major_player:
+            return
+        
+        # There is no action to process:
+        if len(self.unprocessed_action) == 0 or self.action_noped:
+            self.unprocessed_action = np.zeros(0)
             self.action_noped = False
             return
         
@@ -573,7 +601,7 @@ class EKGame:
                 # Asking a card is public, so now everyone knows you have it:
                 self.cards.known_map[:, to, card] += 1
 
-        self.unprocessed_action = None
+        self.unprocessed_action = np.zeros(0)
         
 
     def get_next_major_idx(self) -> int:
