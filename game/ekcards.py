@@ -137,6 +137,10 @@ class EKCards:
         # And the same goes for the discard pile:
         ret[EKCards.DISCARD_PILE_IDX, 1:] = \
             self.cards[EKCards.DISCARD_PILE_IDX]
+        
+        # Everyone also always knows where all the exploding kittens are:
+        ret[:, EKCardTypes.EXPL_KITTEN + 1] = \
+            self.cards[:, EKCardTypes.EXPL_KITTEN]
 
         # Now, rotate, such that you are always the second player:
         ret[EKCards.FIRST_PLAYER_IDX:] = \
@@ -171,10 +175,6 @@ class EKCards:
 
         # Now everyone knows that everyone has at least one defuse:
         self.known_map[:, EKCards.FIRST_PLAYER_IDX:, EKCardTypes.DEFUSE] = 1
-
-        # And everyone knows how many exploding kittens are in the deck:
-        self.known_map[:, EKCards.DECK_IDX, EKCardTypes.EXPL_KITTEN] = \
-            self.cards[EKCards.DECK_IDX, EKCardTypes.EXPL_KITTEN]
     
 
     def random_pick(self, from_idx: int, to_idx: int) -> int:
@@ -251,10 +251,6 @@ class EKCards:
         if from_idx == EKCards.DECK_IDX:
             self.deck_ordered[0] = -1
             self.deck_ordered = np.roll(self.deck_ordered, -1)
-        
-        # Everyone always knows the number of exploding kittens in the deck:
-        self.known_map[:, EKCards.DECK_IDX, EKCardTypes.EXPL_KITTEN] = \
-            self.cards[EKCards.DECK_IDX, EKCardTypes.EXPL_KITTEN]
     
 
     def insert_kitten(self, player_idx: int, placement_idx: int):

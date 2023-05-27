@@ -58,9 +58,15 @@ class EKCardsTests(unittest.TestCase):
             "Sum of cards not equal to total_deck: " + str(sums)
         )
     
-    def assertExplodingKittensKnown(self, cards):
-        self.assertTrue(np.all(cards.known_map[:, EKCards.DECK_IDX, EKCardTypes.EXPL_KITTEN] == cards.cards[EKCards.DECK_IDX, EKCardTypes.EXPL_KITTEN]),
-            "Everyone should always know how many exploding kittens there are in the game!")
+    def assertExplodingKittensKnown(self, cards: EKCards):
+        for idx in range(cards.num_players):
+            known_to_player = cards.get_state(idx)
+
+            # Rototate back for comparison:
+            known_to_player[2:] = np.roll(known_to_player[2:], idx - 1, axis=0)
+
+            self.assertTrue(np.all(known_to_player[:, EKCardTypes.EXPL_KITTEN + 1] == cards.cards[:, EKCardTypes.EXPL_KITTEN]),
+                f"Everyone should always know where all exploding kittens are (\n{known_to_player[:, EKCardTypes.EXPL_KITTEN + 1]} vs \n{cards.cards[:, EKCardTypes.EXPL_KITTEN]})")
     
     def assertDecksEqual(self, a, b):
         self.assertTrue(np.all(a == b),

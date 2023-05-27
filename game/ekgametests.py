@@ -167,6 +167,27 @@ class EKGameTests(unittest.TestCase):
 
         self.assertTrue(np.all(g.cards.deck_ordered[0:3] == -1), "By the end cards should have been shuffled as the nope was noped!")
     
+    def test_nope_nope_nope(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.SHUFFLE)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.NOPE)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.NOPE)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.NOPE)
+
+        first3 = np.array([0, 0, 0])
+        g.cards.deck_ordered[0:3] = first3.copy()
+
+        should_see = [0, 2, 3, 2, 0, 0]
+        for idx in should_see:
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+            self.assertEqual(idx, player,
+                "We should see player 0 first, then player two because has nope, and then player 0 again to draw card and then to die")
+            self.assertTrue(not np.all(g.cards.deck_ordered[0:3] == -1), "Deck should never get shuffled, as action got noped!")
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+    
     def test_shuffle(self):
         g = EKGame()
         EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
@@ -192,6 +213,50 @@ class EKGameTests(unittest.TestCase):
         [player, reward, cards, history, actions] = g.update_and_get_state(False)
         self.assertEqual(player, 0, "First 3 times must all be player #0")
         self.assertEqual(len(actions), 0, "Last time we are dead and cannot take any actions")
+    
+    def test_skip(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.SKIP)
+
+        should_see = [0, 0, 1, 1, 2, 3, 3, 4, 4, 2, 2]
+        for idx in should_see:
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+            self.assertEqual(idx, player,
+                "Player two should survive an extra round because of the skip")
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+    
+    def test_skip_noped(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.SKIP)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.NOPE)
+
+        should_see = [0, 0, 1, 1, 2, 3, 2, 2, 3, 3, 4, 4]
+        for idx in should_see:
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+            self.assertEqual(idx, player,
+                "Now the skip got noped so player 2 directly dies anyway :-)")
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+    
+    def test_skip_not_noped_because_only_player_with_nope_is_dead(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.SKIP)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.NOPE)
+
+        should_see = [0, 0, 1, 1, 2, 3, 3, 4, 4, 2, 2]
+        for idx in should_see:
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+            self.assertEqual(idx, player,
+                "No one should nope, becauese player 0 is the only one with nope and is dead already")
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
 
 
     # print(f"(player #{player} -> {reward:.2} points) || num actions: {len(actions)}, history length: {(len(history))}")

@@ -125,6 +125,10 @@ class EKGame:
             self.legal_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
             self.legal_actions_long = np.zeros([0], dtype=np.int64)
 
+            # If an attack caused this fatality, we must reset it:
+            self.attack_count = 0
+            self.attack_activated = False
+
             # Selecting next player:
             self.major_player = self.get_next_major_idx()
 
@@ -140,6 +144,9 @@ class EKGame:
 
         # There might still be an action that must be processed:
         self.process_action(player)
+
+        # Processing action might have changed player in case of skip or attack:
+        player = self.get_cur_player()
 
         self.reward = self.reward_buffer[player]
         self.reward_buffer[player] = 0
@@ -240,10 +247,15 @@ class EKGame:
             self.action_noped = not self.action_noped
             self.nope_player = -1
             self.nope_player = self.get_next_nope_idx()
+
+            # Lets not allow player to nope own nope 😅:
+            if self.nope_player == player:
+                self.nope_player = self.get_next_nope_idx()
+
             return
 
         # Player is the target of a PLAY_FAVOR:
-        if player != self.major_player and action[EKActionVecDefs.PLAY_FAVOR]:
+        if player != self.major_player and action[EKActionVecDefs.PLAY_FAVOR] == 1:
             card = action[EKActionVecDefs.TARGET_CARD]
             frm = EKCards.FIRST_PLAYER_IDX + player
             to = EKCards.FIRST_PLAYER_IDX + \
@@ -620,5 +632,6 @@ class EKGame:
             idx += 1
             if idx == self.num_players:
                 return -1
-            if self.cards.cards[EKCards.FIRST_PLAYER_IDX + idx, EKCardTypes.NOPE] > 0:
+            if self.still_playing[idx] and \
+                self.cards.cards[EKCards.FIRST_PLAYER_IDX + idx, EKCardTypes.NOPE] > 0:
                 return idx
