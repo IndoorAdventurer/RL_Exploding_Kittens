@@ -260,7 +260,7 @@ class EKGame:
             frm = EKCards.FIRST_PLAYER_IDX + player
             to = EKCards.FIRST_PLAYER_IDX + \
                 self.unprocessed_action[EKActionVecDefs.PLAYER]
-            self.cards.known_pick(frm, to, card)
+            self.cards.known_pick(frm, int(to), int(card))
             self.unprocessed_action = np.zeros(0)
             return
 
@@ -280,7 +280,7 @@ class EKGame:
             return self.nope_player
         if len(self.unprocessed_action) != 0 and \
                 self.unprocessed_action[EKActionVecDefs.PLAY_FAVOR] == 1:
-            return self.unprocessed_action[EKActionVecDefs.POINTER]
+            return int(self.unprocessed_action[EKActionVecDefs.POINTER])
         return self.major_player
 
     def get_legal_actions(self, long_form: bool) -> np.ndarray:
@@ -329,8 +329,13 @@ class EKGame:
             cards, EKCardTypes.ATTACK, EKActionVecDefs.PLAY_ATTACK
         )
         for p_idx in legal_others:
+
+            p_idx_global = (p_idx - 1 + player) % self.num_players
+
             self.push_legal_action(
-                major_and_no_ek and p_idx < self.num_players,
+                major_and_no_ek and p_idx < self.num_players and \
+                self.still_playing[p_idx_global] and \
+                np.sum(self.cards.cards[EKCards.FIRST_PLAYER_IDX + p_idx_global]) > 0,
                 cards,
                 EKCardTypes.FAVOR,
                 EKActionVecDefs.PLAY_FAVOR,
@@ -356,8 +361,13 @@ class EKGame:
 
         # Adding all actions related to having two or three cat cards of same:
         for p_idx in legal_others:
+            
+            p_idx_global = (p_idx - 1 + player) % self.num_players
+            
             self.push_legal_action(
-                major_and_no_ek and p_idx < self.num_players,
+                major_and_no_ek and p_idx < self.num_players and \
+                self.still_playing[p_idx_global] and \
+                np.sum(self.cards.cards[EKCards.FIRST_PLAYER_IDX + p_idx_global]) > 0,
                 cards,
                 max_cats_card,
                 EKActionVecDefs.PLAY_TWO_CATS,
@@ -368,7 +378,9 @@ class EKGame:
 
             for c_idx in range(1, EKCardTypes.NUM_TYPES):
                 self.push_legal_action(
-                    major_and_no_ek and p_idx < self.num_players,
+                    major_and_no_ek and p_idx < self.num_players and \
+                    self.still_playing[p_idx_global] and \
+                    np.sum(self.cards.cards[EKCards.FIRST_PLAYER_IDX + p_idx_global]) > 0,
                     cards,
                     max_cats_card,
                     EKActionVecDefs.PLAY_THREE_CATS,
@@ -401,7 +413,8 @@ class EKGame:
         # be the target of a FAVOR card someone else played:
         for c_idx in range(1, EKCardTypes.NUM_TYPES):
             self.push_legal_action(
-                not is_major and player != self.nope_player,
+                not is_major and player != self.nope_player and \
+                cards[c_idx] > 0,
                 cards,
                 -1,
                 EKActionVecDefs.PLAY_FAVOR,
@@ -588,7 +601,7 @@ class EKGame:
 
         # See the top 3 cards in the deck:
         elif ac[EKActionVecDefs.PLAY_SEE_FUTURE] == 1:
-            future = self.cards.see_future()
+            future = self.cards.see_future(player)
             
             # Via the action history we communicate future to player:
             acvec = np.zeros(EKActionVecDefs.VEC_LEN)
@@ -600,7 +613,7 @@ class EKGame:
         elif ac[EKActionVecDefs.PLAY_TWO_CATS] == 1:
             frm = ac[EKActionVecDefs.POINTER] + EKCards.FIRST_PLAYER_IDX
             to = player + EKCards.FIRST_PLAYER_IDX
-            self.cards.random_pick(frm, to)
+            self.cards.random_pick(int(frm), to)
         
         # Three cats: take a card of your choosing from other (if it has it):
         elif ac[EKActionVecDefs.PLAY_THREE_CATS] == 1:
@@ -608,7 +621,7 @@ class EKGame:
             to = player + EKCards.FIRST_PLAYER_IDX
             card = ac[EKActionVecDefs.TARGET_CARD]
             if self.cards.cards[frm, card] > 0:
-                self.cards.known_pick(frm, to, card)
+                self.cards.known_pick(int(frm), to, card)
 
                 # Asking a card is public, so now everyone knows you have it:
                 self.cards.known_map[:, to, card] += 1

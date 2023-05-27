@@ -127,6 +127,46 @@ class EKGameTests(unittest.TestCase):
                 continue
             g.take_action(player, actions[-1])
     
+    def test_favor(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.FAVOR)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.FAVOR)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.FAVOR)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_B)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_C)
+
+        player_order = [0, 3, 0, 3, 0, 3, 0]
+        num_actions = [2, 3, 2, 2, 2, 1, 1]
+
+        for p_idx, num_acts in zip(player_order, num_actions):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+
+            self.assertEqual(p_idx, player,
+                "We must go back and forward between player 0, that plays a favor, and player 3, who is the target of the favor")
+            self.assertEqual(num_acts, len(actions),
+                "The number of actions must be mostly 2 for player 0, namely pass or play FAVOR card, while for player 3 it must be the number of cards that can be given away: 3, then 2, then 1")
+            print(f"(player #{player} -> {reward:.2} points) || num actions: {len(actions)}, history length: {(len(history))}")
+
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A], 1,
+            "Player 0 now must have taken all the cat cards from 3")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_B], 1,
+            "Player 0 now must have taken all the cat cards from 3")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_C], 1,
+            "Player 0 now must have taken all the cat cards from 3")
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A], 0,
+            "Meaning that player 3 does not have them anymore")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_B], 0,
+            "Meaning that player 3 does not have them anymore")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_C], 0,
+            "Meaning that player 3 does not have them anymore")
+    
     def test_single_nope_round(self):
         g = EKGame()
         EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
@@ -257,6 +297,186 @@ class EKGameTests(unittest.TestCase):
             if len(actions) == 0:
                 continue
             g.take_action(player, actions[-1])
+
+    def test_see_future_simple(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 3)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.SEE_FUTURE)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+
+        while np.sum(g.still_playing) > 1:
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+            
+            self.assertTrue((player == 0) == np.any(history[:, EKActionVecDefs.FUTURE_1:] == EKCardTypes.CAT_A) or (len(history) == 0),
+                "We should only see a future show up in the history IFF we are player zero")
+
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+    
+    def test_see_future_two_cards(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 3)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.SEE_FUTURE)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 1, EKCardTypes.SEE_FUTURE)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.deck_ordered[0] = EKCardTypes.CAT_A
+
+        # Player one makes a move: first sees future, then draws cat A:
+        [player, reward, cards, history, actions] = g.update_and_get_state(False)
+        self.assertEqual(player, 0, "Player 0 starts ofc")
+        g.take_action(player, actions[-1])
+        [player, reward, cards, history, actions] = g.update_and_get_state(False)
+        self.assertEqual(player, 0, "After playing future card, player one should get chance to draw card")
+        future = history[0, EKActionVecDefs.FUTURE_1:]
+        self.assertTrue(np.all(future == g.cards.deck_ordered[:3]),
+            "We should perceive a future that is also going to come true")
+        g.take_action(player, actions[-1])
+        [player, reward, cards, history, actions] = g.update_and_get_state(False)
+        self.assertEqual(player, 1, "Player 0 drew CAT_A card, so now its player 1s turn")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A], 1,
+            "Player zero should have drawn a CAT_A card")
+        g.take_action(player, actions[-1])
+        [player, reward, cards, history, actions] = g.update_and_get_state(False)
+        future2 = history[0, EKActionVecDefs.FUTURE_1:]
+        self.assertTrue(np.all(future[1:] == future2[:-1]),
+            "Player 0 and Player 1 their futures should overlap")
+        self.assertEqual(player, 1, "Player 1 still has its turn: did future")
+        g.take_action(player, actions[-1])
+        [player, reward, cards, history, actions] = g.update_and_get_state(False)
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 1, int(future2[0])], 1,
+            "Whatever player 2 saw in its future, will be what he now drew")
+
+    def test_no_one_to_take_cards_from(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.FAVOR)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+
+        [player, reward, cards, history, actions] = g.update_and_get_state(False)
+        self.assertEqual(len(actions), 1,
+            "We have many cards to take stuff from others, but since none of the others have cards, we cant do anything")
+
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.FAVOR)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.random_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 1)
+        g.cards.random_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 2)
+        g.cards.random_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3)
+
+        [player, reward, cards, history, actions] = g.update_and_get_state(False)
+        self.assertEqual(len(actions), 43,
+            "But now that all the others do have cards, we can go wild!")
+    
+    def test_play_two_cats(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.DEFUSE)
+
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A], 2,
+            "At the start player 0 has two cats")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A], 0,
+            "But player 3 has none")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.DEFUSE], 0,
+            "Moreover, Player 0 has no defuse")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.DEFUSE], 1,
+            "But Player 3 has one defuse")
+
+        for idx in range(3):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+            
+            self.assertEqual(player, 0, "Only player 0 should be seen: first uses two cats, then draws card, than defuses")
+
+            if idx == 2:
+                break
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A], 0,
+            "At the end also player zero has no cats")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A], 0,
+            "As does player 3")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.DEFUSE], 1,
+            "However, player zero now took the defuse of player 3")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.DEFUSE], 0,
+            "Meaning player 3 does not have it anymore")
+    
+    def three_cats_card_that_is_there(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_E)
+
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A], 3,
+            "At the start player 0 has three cats")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A], 0,
+            "But player 3 has none")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_E], 0,
+            "Moreover, Player 0 has no cat_e")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_E], 1,
+            "But Player 3 does")
+
+        for idx in range(3):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+            
+            self.assertEqual(player, 0, "Only player 0 should be seen: first uses two cats, then draws card, than defuses")
+
+            if idx == 2:
+                break
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A], 0,
+            "At the end also player zero has no cat_a")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A], 0,
+            "As does player 3")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_E], 1,
+            "However, player zero now took the cat_e of player 3")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_E], 0,
+            "Meaning player 3 does not have it anymore")
+    
+    def three_cats_card_that_is_not_there(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.DEFUSE)
+
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A], 3,
+            "At the start player 0 has three cats")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A], 0,
+            "But player 3 has none")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.DEFUSE], 0,
+            "Moreover, Player 0 has no defuse")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.DEFUSE], 1,
+            "But Player 3 does")
+
+        for idx in range(3):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+            
+            self.assertEqual(player, 0, "Only player 0 should be seen: first uses two cats, then draws card, than defuses")
+
+            if idx == 2:
+                break
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.CAT_A], 0,
+            "At the end also player zero has no cat_a as these were played")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A], 0,
+            "Player 3 still does not have one either")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX, EKCardTypes.DEFUSE], 0,
+            "Player 0 tried to take cat_e from player 3, which was not there, so player 0 did not get the defuse")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.DEFUSE], 1,
+            "Meaning player 3 still has it :-)")
 
 
     # print(f"(player #{player} -> {reward:.2} points) || num actions: {len(actions)}, history length: {(len(history))}")
