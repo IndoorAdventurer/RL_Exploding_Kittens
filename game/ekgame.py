@@ -62,6 +62,66 @@ class EKGame:
     def __init__(self) -> None:
         """Constructor. Does not do much."""
         self.cards = EKCards()
+        self.precompute_actions()
+    
+    def precompute_actions(self):
+        """ There are 82 possible actions, and each has a unique representation.
+        This function computes all of these beforehand. """
+        self.all_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
+        self.all_actions_cards = np.zeros([0], dtype=np.int64)
+        self.all_actions_pointers = np.zeros([0], dtype=np.int64)
+        self.all_actions_target_cards = np.zeros([0], dtype=np.int64)
+
+        # All relative player indeces, except yourself (at idx 1):
+        legal_others = np.arange(EKGame.MAX_PLAYERS)
+        legal_others = np.delete(legal_others, 1)
+
+        # Passing:
+        self.precompute_actions_aux(-1, -1)
+
+        # Most action cards:
+        self.precompute_actions_aux(EKCardTypes.ATTACK, EKActionVecDefs.PLAY_ATTACK)
+        for p_idx in legal_others:
+            self.precompute_actions_aux(EKCardTypes.FAVOR, EKActionVecDefs.PLAY_FAVOR, p_idx)
+        self.precompute_actions_aux(EKCardTypes.SHUFFLE, EKActionVecDefs.PLAY_SHUFFLE)
+        self.precompute_actions_aux(EKCardTypes.SKIP, EKActionVecDefs.PLAY_SKIP)
+        self.precompute_actions_aux(EKCardTypes.SEE_FUTURE, EKActionVecDefs.PLAY_SEE_FUTURE)
+        for p_idx in legal_others:
+            self.precompute_actions_aux(-1, EKActionVecDefs.PLAY_TWO_CATS, p_idx)
+            for t_idx in range(1, EKCardTypes.NUM_TYPES):
+                self.precompute_actions_aux(-1, EKActionVecDefs.PLAY_THREE_CATS, p_idx, t_idx)
+        
+        # Defusing exploding kitten:
+        for p_idx in range(-1, EKCards.INIT_DECK_ORDERED_LEN):
+            self.precompute_actions_aux(EKCardTypes.DEFUSE, EKActionVecDefs.DEFUSE_KITTEN, p_idx)
+        
+        # Playing nope:
+        self.precompute_actions_aux(EKCardTypes.NOPE, EKActionVecDefs.PLAY_NOPE)
+
+        # Give favor:
+        for t_idx in range(1, EKCardTypes.NUM_TYPES):
+            self.precompute_actions_aux(-1, EKActionVecDefs.PLAY_FAVOR, 0, t_idx)
+        
+        # Make sure I did not forget any actions. (Will keep it in just in case)
+        assert(len(self.all_actions) == 82)
+        assert(len(self.all_actions_cards) == 82)
+        assert(len(self.all_actions_pointers) == 82)
+        assert(len(self.all_actions_target_cards) == 82)
+
+    def precompute_actions_aux(self,
+            card: int, action: int, pointer: int = 0, target_card: int = 0):
+        """ auxiliary function for above """
+        ac_vec = np.zeros(EKActionVecDefs.VEC_LEN)
+        ac_vec[EKActionVecDefs.PLAYER] = 1  # Always 1 because player centric
+        ac_vec[EKActionVecDefs.POINTER] = pointer
+        ac_vec[EKActionVecDefs.TARGET_CARD] = target_card
+        if action != -1:
+            ac_vec[action] = 1
+        self.all_actions = np.append(self.all_actions, [ac_vec], axis=0)
+        self.all_actions_cards = np.append(self.all_actions_cards, card)
+        self.all_actions_pointers = np.append(self.all_actions_pointers, pointer)
+        self.all_actions_target_cards = \
+            np.append(self.all_actions_target_cards, target_card)
 
     def reset(self, num_players: int):
         """
@@ -92,7 +152,7 @@ class EKGame:
         # processed after everyone has had a chance to nope.
 
         self.legal_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
-        self.legal_actions_long = np.zeros([0], dtype=np.int64)
+        self.legal_actions_long = np.zeros([82], dtype=np.int64)
 
         self.attack_count = 0 # Number of extra cards attacked player must pick
         self.attack_activated = False # Gets true when player could not defend
@@ -201,7 +261,7 @@ class EKGame:
             `long_form = False`.
         """
         if isinstance(action, int): # Convert all actions to same format:
-            action = self.action_from_long_form(action)
+            action = self.all_actions[action]
         action = self.player_centric_to_global(player, action)
 
         # Player is the victim of an attack and does not play an attack too
@@ -266,11 +326,11 @@ class EKGame:
 
         # Player is the target of a PLAY_FAVOR:
         if not self.cur_player_is_major and action[EKActionVecDefs.PLAY_FAVOR] == 1:
-            card = action[EKActionVecDefs.TARGET_CARD]
+            card = int(action[EKActionVecDefs.TARGET_CARD])
             frm = EKCards.FIRST_PLAYER_IDX + player
-            to = EKCards.FIRST_PLAYER_IDX + \
-                self.unprocessed_action[EKActionVecDefs.PLAYER]
-            self.cards.known_pick(frm, int(to), int(card))
+            to = int(EKCards.FIRST_PLAYER_IDX +
+                self.unprocessed_action[EKActionVecDefs.PLAYER])
+            self.cards.known_pick(frm, to, card)
             self.unprocessed_action = np.zeros(0)
             return
 
@@ -309,12 +369,9 @@ class EKGame:
 
     def calc_legal_actions(self, player: int):
         """
-        Initializes self.legal_actions and self.legal_actions_long with the
-        actions that are legal to take for the current player (`player` arg)
+        Initializes `self.legal_actions` and `self.legal_actions_long` with the
+        actions that are legal to take for `player`
         """
-
-        self.legal_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
-        self.legal_actions_long = np.zeros([0], dtype=np.int64)
 
         cards = self.cards.cards[EKCards.FIRST_PLAYER_IDX + player]
 
@@ -323,152 +380,59 @@ class EKGame:
         is_major = self.cur_player_is_major
         major_and_no_ek = is_major and cards[EKCardTypes.EXPL_KITTEN] == 0
 
-        # All relative player indeces, except yourself (at idx 1):
-        legal_others = np.arange(EKGame.MAX_PLAYERS)
-        legal_others = np.delete(legal_others, 1)
-
-        # Passing:
-        self.push_legal_action(
-            major_and_no_ek or player == self.nope_player, cards, -1, -1)
-        
-        # Most actions associated to cards:
-
-        # Attack only allowed if you did not play any other moves yet in your
-        # turn, and you are the first or second to play the attack card:
-        self.push_legal_action(
-            major_and_no_ek and self.attack_activated == False \
-                and self.attack_count < 3,
-            cards, EKCardTypes.ATTACK, EKActionVecDefs.PLAY_ATTACK
-        )
-        for p_idx in legal_others:
-
-            p_idx_global = (p_idx - 1 + player) % self.num_players
-
-            self.push_legal_action(
-                major_and_no_ek and p_idx < self.num_players and \
-                self.still_playing[p_idx_global] and \
-                np.sum(self.cards.cards[EKCards.FIRST_PLAYER_IDX + p_idx_global]) > 0,
-                cards,
-                EKCardTypes.FAVOR,
-                EKActionVecDefs.PLAY_FAVOR,
-                p_idx,
-            )
-        self.push_legal_action(
-            major_and_no_ek, cards, EKCardTypes.SHUFFLE, EKActionVecDefs.PLAY_SHUFFLE
-        )
-        self.push_legal_action(
-            major_and_no_ek, cards, EKCardTypes.SKIP, EKActionVecDefs.PLAY_SKIP
-        )
-        self.push_legal_action(
-            major_and_no_ek,
-            cards,
-            EKCardTypes.SEE_FUTURE,
-            EKActionVecDefs.PLAY_SEE_FUTURE,
-        )
-
         # Finding the cat card (CAT_A, to CAT_E) we have the most of:
         cats_mask = np.zeros_like(cards)
         cats_mask[EKCardTypes.CAT_A :] = 1
-        max_cats_card = np.argmax(cards * cats_mask)
+        max_cats = np.max(cards * cats_mask)
+        
+        # For each action see if we have the required card if any:
+        legal_mask = (self.all_actions_cards == -1) | (cards[self.all_actions_cards] > 0)
 
-        # Adding all actions related to having two or three cat cards of same:
-        for p_idx in legal_others:
-            
-            p_idx_global = (p_idx - 1 + player) % self.num_players
-            
-            self.push_legal_action(
-                major_and_no_ek and p_idx < self.num_players and \
-                self.still_playing[p_idx_global] and \
-                np.sum(self.cards.cards[EKCards.FIRST_PLAYER_IDX + p_idx_global]) > 0,
-                cards,
-                max_cats_card,
-                EKActionVecDefs.PLAY_TWO_CATS,
-                p_idx,
-                0,
-                2,
-            )
+        # For cat cards we need 2 or 3 instead of 1:
+        legal_mask[9:61] = (max_cats >= 3)
+        legal_mask[[9, 22, 35, 48]] = (max_cats >= 2)
 
-            for c_idx in range(1, EKCardTypes.NUM_TYPES):
-                self.push_legal_action(
-                    major_and_no_ek and p_idx < self.num_players and \
-                    self.still_playing[p_idx_global] and \
-                    np.sum(self.cards.cards[EKCards.FIRST_PLAYER_IDX + p_idx_global]) > 0,
-                    cards,
-                    max_cats_card,
-                    EKActionVecDefs.PLAY_THREE_CATS,
-                    p_idx,
-                    c_idx,
-                    3,
-                )
+        # For most actions we must be the major player without expl_kit:
+        legal_mask[0:61] = legal_mask[0:61] & major_and_no_ek
 
-        # Placing back an exploding kitten:
-        deck_len = np.sum(self.cards.cards[EKCards.DECK_IDX])
-        for deck_idx in range(-1, EKCards.INIT_DECK_ORDERED_LEN):
-            self.push_legal_action(
-                # idx can also be equal because after its placed deck will be longer:
-                is_major and cards[EKCardTypes.EXPL_KITTEN] > 0 and deck_idx <= deck_len,
-                cards,
-                EKCardTypes.DEFUSE,
-                EKActionVecDefs.DEFUSE_KITTEN,
-                deck_idx,
-            )
+        # For passing we can also be nope player:
+        legal_mask[0] = legal_mask[0] | (player == self.nope_player)
 
-        # Play nope card when its the kind of game where it is not your turn:
-        self.push_legal_action(
-            player == self.nope_player,
-            cards,
-            EKCardTypes.NOPE,
-            EKActionVecDefs.PLAY_NOPE,
-        )
+        # For defusing we must also have exploding kitten:
+        legal_mask[61:69] = legal_mask[61:69] & is_major & (not major_and_no_ek)
 
-        # If we are not the major player, and we are not a nope player, we must
-        # be the target of a FAVOR card someone else played:
-        for c_idx in range(1, EKCardTypes.NUM_TYPES):
-            self.push_legal_action(
-                not is_major and player != self.nope_player and \
-                cards[c_idx] > 0,
-                cards,
-                -1,
-                EKActionVecDefs.PLAY_FAVOR,
-                0,
-                c_idx,
-            )
+        # only nope player can play nope...:
+        legal_mask[69] = legal_mask[69] & (player == self.nope_player)
 
-    def push_legal_action(
-        self,
-        preconditions: bool,
-        cards: np.ndarray,
-        card: int,
-        action: int,
-        pointer: int = 0,
-        target_card: int = 0,
-        card_th: int = 1,
-    ):
-        """
-        Checks if an action would be legal, and pushes to array of legal actions
-        if so.
+        # And for giving favor we cant be major nor nope player:
+        legal_mask[70:] = legal_mask[70:] & (not is_major) & (player != self.nope_player)
 
-        Args:
-            preconditions (bool): only even consider pushing if this is true
-            cards (np.ndarray): the stack of cards belonging to the cur player
-            card (EKCardTypes): the card associated with the action. -1 for none
-            card_th: (int): you need this many cards to be able to play action
-            action (EKActionVecDefs): the action itself. -1 for no action!
-            pointer (int): the optional pointer. Usually gives relative index of
-            another player, but sometimes something else.
-            target (int): the optional target. Points to a card. For example, a
-            card you want from someone, or want to give away to someone.
-        """
-        conditions_met = preconditions and (card == -1 or cards[card] >= card_th)
-        if conditions_met:
-            ac_vec = np.zeros(EKActionVecDefs.VEC_LEN)
-            ac_vec[EKActionVecDefs.PLAYER] = 1  # Always 1 because player centric
-            ac_vec[EKActionVecDefs.POINTER] = pointer
-            ac_vec[EKActionVecDefs.TARGET_CARD] = target_card
-            if action != -1:
-                ac_vec[action] = 1
-            self.legal_actions = np.append(self.legal_actions, [ac_vec], axis=0)
-        self.legal_actions_long = np.append(self.legal_actions_long, conditions_met)
+        # Attack has some extra constraints:
+        legal_mask[1] = legal_mask[1] & \
+            (self.attack_activated == False) & (self.attack_count < 3)
+        
+        # for FAVOR, TWO_CATS and THREE_CATS, we must check if the victim is
+        # (still) playing, and has at least 1 card:
+        ranges = np.r_[2:6, 9:61]
+        global_players = np.mod(self.all_actions_pointers[ranges] - 1 + player,
+                                self.num_players)
+        legal_mask[ranges] = legal_mask[ranges] & \
+            (self.all_actions_pointers[ranges] < self.num_players) & \
+            self.still_playing[global_players] & \
+            (np.sum(self.cards.cards[EKCards.FIRST_PLAYER_IDX + \
+                global_players], axis = 1) > 0)
+
+        # Exploding kitten cannot be placed beyond length of deck:
+        legal_mask[61:69] = legal_mask[61:69] & \
+            (self.all_actions_pointers[61:69] <=
+                np.sum(self.cards.cards[EKCards.DECK_IDX]))
+        
+        # For giving favor, we must ourself posses the card we want to give:
+        legal_mask[70:] = legal_mask[70:] & \
+            (cards[self.all_actions_target_cards[70:]] > 0)
+
+        self.legal_actions = self.all_actions[legal_mask]
+        self.legal_actions_long = legal_mask.astype(np.int64)
     
     def play_cards(self, player: int, action: np.ndarray):
         """ Makes sure the card(s) corresponding to action go to discard pile """
@@ -520,11 +484,6 @@ class EKGame:
             return
         
         raise RuntimeError(f"Got illegal action: {action}")
-
-    def action_from_long_form(self, idx) -> np.ndarray:
-        """ Return action corresponding to index into `legal_actions_long`. """
-        indeces = np.cumsum(self.legal_actions_long) - 1
-        return self.legal_actions[indeces[idx]]
     
     def player_centric_to_global(self, player: int, action: np.ndarray):
         """ Players view everything player centric: they don't know their own
@@ -623,9 +582,12 @@ class EKGame:
         
         # Two cats: Take a random card from ohter player:
         elif ac[EKActionVecDefs.PLAY_TWO_CATS] == 1:
-            frm = ac[EKActionVecDefs.POINTER] + EKCards.FIRST_PLAYER_IDX
+            frm = int(ac[EKActionVecDefs.POINTER] + EKCards.FIRST_PLAYER_IDX)
             to = player + EKCards.FIRST_PLAYER_IDX
-            self.cards.random_pick(int(frm), to)
+
+            # Check if frm still has card: maybe played nope inbetween:
+            if np.sum(self.cards.cards[frm]) > 0:
+                self.cards.random_pick(frm, to)
         
         # Three cats: take a card of your choosing from other (if it has it):
         elif ac[EKActionVecDefs.PLAY_THREE_CATS] == 1:

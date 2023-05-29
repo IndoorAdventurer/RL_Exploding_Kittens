@@ -67,7 +67,7 @@ class EKGameTests(unittest.TestCase):
 
             for idx in range(len(long_form)):
                 if long_form[idx] == 1:
-                    short_from_long = g.action_from_long_form(idx)
+                    short_from_long = g.all_actions[idx]
                     self.assertTrue(np.all(short_form[short_idx] == short_from_long),
                         "We should be able to get the short form action from an index into the long form array, if the value there is 1")
                     short_idx += 1
@@ -664,9 +664,14 @@ class EKGameTests(unittest.TestCase):
                     continue
 
                 g.take_action(player, actions[np.random.randint(len(actions))])
-
+    
+    def test_test(self):
+        np.set_printoptions(threshold=np.inf, linewidth=100)
+        g = EKGame()
+        g.reset(5)
+        [player, reward, cards, history, actions] = g.update_and_get_state(True)
     # print(f"(player #{player} -> {reward:.2} points) || num actions: {len(actions)}, history length: {(len(history))}")
 
 
 if __name__ == "__main__":
-    unittest.main() # argv=["ignore", "EKGameTests.test_the_big_one"]
+    unittest.main(failfast=True) # argv=["ignore", "EKGameTests.test_the_big_one"]
