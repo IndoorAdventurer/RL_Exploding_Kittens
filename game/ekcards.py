@@ -199,6 +199,8 @@ class EKCards:
 
             if np.sum(probs) == 0:
                 raise RuntimeError("Trying to randomly pick card from empty!")
+            if np.any(probs < 0):
+                raise(RuntimeError(f"Found a negative number of cards: {probs}."))
             probs = probs / (np.sum(probs))
             picked_card = np.random.choice(len(probs), p = probs)
         self.known_pick(from_idx, to_idx, picked_card)
@@ -267,7 +269,7 @@ class EKCards:
             If -1 is given, the kitten is randomly placed.
         """
 
-        self.known_pick(EKCards.FIRST_PLAYER_IDX +  player_idx,
+        self.known_pick(EKCards.FIRST_PLAYER_IDX + player_idx,
                         EKCards.DECK_IDX, EKCardTypes.EXPL_KITTEN)
         
         if placement_idx >= len(self.deck_ordered) or \
@@ -297,7 +299,7 @@ class EKCards:
         top_3 = self.deck_ordered[:3] # not .copy, so changes in place!
 
         # First take what we know out, because we draw without replacement:
-        for card_idx in top_3:
+        for card_idx in self.deck_ordered:
             if card_idx != -1:
                 tmp_deck[card_idx] -= 1
         

@@ -98,7 +98,17 @@ class EKGame:
         self.attack_activated = False # Gets true when player could not defend
         # by playing an attack card too
 
+        # Handy boolean for calculating legal actions:
+        self.cur_player_is_major = False
+
     def update_state(self):
+        # First check if FAVOR card noped, as this will affect get_cur_player:
+        if self.action_noped and self.nope_player == -1 and \
+            len(self.unprocessed_action) != 0 and \
+                self.unprocessed_action[EKActionVecDefs.PLAY_FAVOR] == 1:
+            self.action_noped = False
+            self.unprocessed_action = np.zeros(0)
+
         player = self.get_cur_player()
 
         # Check if we drew an exploding kitten, but have no defuse:
@@ -255,7 +265,7 @@ class EKGame:
             return
 
         # Player is the target of a PLAY_FAVOR:
-        if player != self.major_player and action[EKActionVecDefs.PLAY_FAVOR] == 1:
+        if not self.cur_player_is_major and action[EKActionVecDefs.PLAY_FAVOR] == 1:
             card = action[EKActionVecDefs.TARGET_CARD]
             frm = EKCards.FIRST_PLAYER_IDX + player
             to = EKCards.FIRST_PLAYER_IDX + \
@@ -274,6 +284,7 @@ class EKGame:
 
     def get_cur_player(self) -> int:
         """Returns the player who should take an action next"""
+        self.cur_player_is_major = False
         # First give everyone chance to nope, then, if favor card was played,
         # let the target of that card respond, and finally let major player play
         if self.nope_player != -1:
@@ -281,6 +292,7 @@ class EKGame:
         if len(self.unprocessed_action) != 0 and \
                 self.unprocessed_action[EKActionVecDefs.PLAY_FAVOR] == 1:
             return int(self.unprocessed_action[EKActionVecDefs.POINTER])
+        self.cur_player_is_major = True
         return self.major_player
 
     def get_legal_actions(self, long_form: bool) -> np.ndarray:
@@ -308,7 +320,7 @@ class EKGame:
 
         # Precondition for most actions is that we are the major player and that
         # there are no exploding kittens in the own deck:
-        is_major = player == self.major_player
+        is_major = self.cur_player_is_major
         major_and_no_ek = is_major and cards[EKCardTypes.EXPL_KITTEN] == 0
 
         # All relative player indeces, except yourself (at idx 1):
@@ -565,7 +577,7 @@ class EKGame:
     def process_action(self, player: int):
         """ Process the `self.unprocessed_action` """
         # If we are not the major player, we ignore:
-        if player != self.major_player:
+        if not self.cur_player_is_major:
             return
         
         # There is no action to process:
@@ -620,11 +632,11 @@ class EKGame:
             frm = ac[EKActionVecDefs.POINTER] + EKCards.FIRST_PLAYER_IDX
             to = player + EKCards.FIRST_PLAYER_IDX
             card = ac[EKActionVecDefs.TARGET_CARD]
-            if self.cards.cards[frm, card] > 0:
-                self.cards.known_pick(int(frm), to, card)
+            if self.cards.cards[int(frm), int(card)] > 0:
+                self.cards.known_pick(int(frm), to, int(card))
 
                 # Asking a card is public, so now everyone knows you have it:
-                self.cards.known_map[:, to, card] += 1
+                self.cards.known_map[:, to, int(card)] += 1
 
         self.unprocessed_action = np.zeros(0)
         

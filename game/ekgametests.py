@@ -3,6 +3,7 @@ from ekgame import EKGame, EKActionVecDefs
 from ekcards import EKCards, EKCardTypes
 import numpy as np
 from pprint import pprint
+import random
 
 class EKGameTests(unittest.TestCase):
     
@@ -127,6 +128,167 @@ class EKGameTests(unittest.TestCase):
                 continue
             g.take_action(player, actions[-1])
     
+    def test_attack(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.deck_ordered[:4] = EKCardTypes.CAT_A
+
+
+        player_order = [0, 1, 1, 2]
+        num_actions = [2, 1, 1, 1]
+
+        for p_idx, num_acts in zip(player_order, num_actions):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+   
+            self.assertEqual(p_idx, player,
+                "First player 0 is, then player 1 has two play two times because is being attacked. Only after attack complete will player 2 start playing")
+            self.assertEqual(num_acts, len(actions),
+                "Player 0 has two options: play attack or draw card. All others can only draw card")
+
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 1, EKCardTypes.CAT_A], 2,
+            "Player 1 should have drawn both the CAT_As")
+    
+    def test_attack_and_skip(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 1, EKCardTypes.SKIP)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.deck_ordered[:4] = EKCardTypes.CAT_A
+
+
+        player_order = [0, 1, 1, 2]
+        num_actions = [2, 2, 1, 1]
+
+        for p_idx, num_acts in zip(player_order, num_actions):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+   
+            self.assertEqual(p_idx, player,
+                "First player 0 is, then player 1 has two play two times because is being attacked. Only after attack complete will player 2 start playing")
+            self.assertEqual(num_acts, len(actions),
+                "Player 0 has two options: play attack or draw card. Player 1 has two options as well: play skip or draw card. After that all just 1 option")
+
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 1, EKCardTypes.CAT_A], 1,
+            "Player 1 should have drawn 1 CAT_A because he skipped on first one")
+        
+    def test_double_attack(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 1, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.deck_ordered[:4] = EKCardTypes.CAT_A
+
+
+        player_order = [0, 1, 2, 2, 2, 2, 3]
+        num_actions = [2, 2, 1, 1, 1, 1, 1]
+
+        for p_idx, num_acts in zip(player_order, num_actions):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+   
+            
+            self.assertEqual(p_idx, player,
+                "First player 0 and 1 are, then player 2 has to draw 4 cards, and only then player 3 is")
+            self.assertEqual(num_acts, len(actions),
+                "Player 0 and 1 have two options: play attack or draw card. Player 3 can draw cards")
+
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.CAT_A], 4,
+            "Player 2 should have drawn all four CAT_As. He could not play them because there was no one left to take anything from")
+    
+    def test_double_attack_with_possible_action(self):
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 1, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 4, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.deck_ordered[:4] = EKCardTypes.CAT_A
+
+
+        player_order = [0, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4]
+        num_actions = [2, 2, 1, 1, 2, 1, 2, 1, 1, 0, 1]
+
+        for p_idx, num_acts in zip(player_order, num_actions):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+   
+            
+            self.assertEqual(p_idx, player,
+                "Player 2 now plays one more, because after two there is someone to take a card from. Player 3 plays 3 because draws exploding kitten")
+            self.assertEqual(num_acts, len(actions),
+                "Player 2 will now have two options after having gotten two CAT_A cards, and again two options at the final because he has the attack from player 4")
+
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.CAT_A], 1,
+            "Player 2 has just 1 CAT_A instead of 4, because he played two and played an attack instead of drawin the last 1")
+
+    def test_tripple_attack_not_possible(self):
+        """ Giving player 2 an attack as well should change nothing, as you can only double it, not tripple it """
+        g = EKGame()
+        EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 1, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.ATTACK)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_A)
+        g.cards.known_pick(EKCards.DISCARD_PILE_IDX, EKCards.DECK_IDX, EKCardTypes.CAT_B)
+        g.cards.deck_ordered[:4] = EKCardTypes.CAT_A
+        g.cards.deck_ordered[4] = EKCardTypes.CAT_B
+
+
+        player_order = [0, 1, 2, 2, 2, 2, 3, 3, 4]
+        num_actions = [2, 2, 1, 1, 1, 2, 1, 1, 1]
+
+        for p_idx, num_acts in zip(player_order, num_actions):
+            [player, reward, cards, history, actions] = g.update_and_get_state(False)
+
+            self.assertEqual(p_idx, player,
+                "First player 0 and 1 are, then player 2 has to draw 3 cards, but plays an attack on the thrid turn, meaning that player 4 has to draw two cards")
+            self.assertEqual(num_acts, len(actions),
+                "Player 0 and 1 have two options: play attack or draw card. Player 3 can draw cards only, untill last, when he can also play attack")
+
+            if len(actions) == 0:
+                continue
+            g.take_action(player, actions[-1])
+        
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 2, EKCardTypes.CAT_A], 3,
+            "Player 2 should have drawn 3 CAT_As now, because played attack on last")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_A], 1,
+            "Player 3 should have drawn the last CAT_A")
+        self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.CAT_B], 1,
+            "And also the CAT_B")
+    
+    
     def test_favor(self):
         g = EKGame()
         EKGameTests.reset_game_to_all_on_discard_pile(g, 5)
@@ -147,7 +309,6 @@ class EKGameTests(unittest.TestCase):
                 "We must go back and forward between player 0, that plays a favor, and player 3, who is the target of the favor")
             self.assertEqual(num_acts, len(actions),
                 "The number of actions must be mostly 2 for player 0, namely pass or play FAVOR card, while for player 3 it must be the number of cards that can be given away: 3, then 2, then 1")
-            print(f"(player #{player} -> {reward:.2} points) || num actions: {len(actions)}, history length: {(len(history))}")
 
             if len(actions) == 0:
                 continue
@@ -477,10 +638,35 @@ class EKGameTests(unittest.TestCase):
             "Player 0 tried to take cat_e from player 3, which was not there, so player 0 did not get the defuse")
         self.assertEqual(g.cards.cards[EKCards.FIRST_PLAYER_IDX + 3, EKCardTypes.DEFUSE], 1,
             "Meaning player 3 still has it :-)")
+    
+    def test_the_big_one(self):
+        """ Just letting it play a number of games with only random agents """
+        g = EKGame()
+        for det_seed in range(1996, 2100):
+            # print(f"({det_seed})", end="", flush=True)
+            # np.random.seed(det_seed)
+            # random.seed(det_seed + 1) # +1 so not same if they happen to use same generator :-p
 
+            num_players = np.random.randint(2, 6)
+            g.reset(num_players)
+
+            still_playing = np.sum(g.still_playing)
+
+            while np.sum(g.still_playing) > 1:
+                [player, reward, cards, history, actions] = g.update_and_get_state(False)
+                
+                new_still_playing = np.sum(g.still_playing)
+                self.assertTrue(new_still_playing <= still_playing,
+                    "Number of players can only monotonically decrease")
+                still_playing = new_still_playing
+
+                if len(actions) == 0:
+                    continue
+
+                g.take_action(player, actions[np.random.randint(len(actions))])
 
     # print(f"(player #{player} -> {reward:.2} points) || num actions: {len(actions)}, history length: {(len(history))}")
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main() # argv=["ignore", "EKGameTests.test_the_big_one"]
