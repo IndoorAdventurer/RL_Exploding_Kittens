@@ -2,8 +2,6 @@ import unittest
 from ekgame import EKGame, EKActionVecDefs
 from ekcards import EKCards, EKCardTypes
 import numpy as np
-from pprint import pprint
-import random
 
 class EKGameTests(unittest.TestCase):
     
@@ -664,13 +662,6 @@ class EKGameTests(unittest.TestCase):
                     continue
 
                 g.take_action(player, actions[np.random.randint(len(actions))])
-    
-    def test_test(self):
-        np.set_printoptions(threshold=np.inf, linewidth=100)
-        g = EKGame()
-        g.reset(5)
-        [player, reward, cards, history, actions] = g.update_and_get_state(True)
-    # print(f"(player #{player} -> {reward:.2} points) || num actions: {len(actions)}, history length: {(len(history))}")
 
 
 if __name__ == "__main__":

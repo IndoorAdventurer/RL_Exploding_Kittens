@@ -140,7 +140,7 @@ class EKGame:
 
         # Reward to still return next time player gets turn:
         self.reward_buffer = np.zeros(num_players)
-        self.reward = 0     # Actual reward to return
+        self.reward = .0     # Actual reward to return
 
         # History of actions taken by self and others, with 0 most recent:
         self.action_history = np.zeros([0, EKActionVecDefs.VEC_LEN])
@@ -226,7 +226,7 @@ class EKGame:
 
     def update_and_get_state(
         self, long_form: bool
-    ) -> tuple[int, int, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> tuple[int, float, np.ndarray, np.ndarray, np.ndarray]:
         """
         Returns the current visible state of the game for a specific player
 
