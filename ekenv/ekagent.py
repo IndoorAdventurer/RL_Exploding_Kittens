@@ -1,6 +1,6 @@
 import abc
 import numpy as np
-from ekgame import EKActionVecDefs
+from .ekgame import EKActionVecDefs
 
 
 class EKAgent(abc.ABC):

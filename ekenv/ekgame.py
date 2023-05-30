@@ -1,5 +1,5 @@
 import numpy as np
-from ekcards import EKCards, EKCardTypes
+from .ekcards import EKCards, EKCardTypes
 
 
 class EKActionVecDefs:

@@ -1,8 +1,8 @@
 import numpy as np
 from typing import Callable
-from ekagent import EKAgent
-from ekgame import EKGame, EKActionVecDefs
-from appendprobs import append_probabilities
+from .ekagent import EKAgent
+from .ekgame import EKGame, EKActionVecDefs
+from .appendprobs import append_probabilities
 
 
 class EKTrainer:
