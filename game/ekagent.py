@@ -1,5 +1,6 @@
 import abc
 import numpy as np
+from ekgame import EKActionVecDefs
 
 
 class EKAgent(abc.ABC):
@@ -8,6 +9,13 @@ class EKAgent(abc.ABC):
     environment. One can derive a class from this one in order to implement any
     sort of learning agent. Please carefully read all documentation below ;-D 
     """
+
+    # Constants for normalization purposes:
+    MAX_CARD_SUM = 52       # max cards you can ever see in 1 place
+    MAX_NUM_CARDS_VAL = 6   # max cards of same type you can ever see in 1 place
+    MAX_PLAYER_VAL = 4      # the max played idx value
+    MAX_POINTER_VAL = 6     # max possible val for pointer in action vec
+    MAX_CARD_VAL = 12       # max possible val for target_card
 
     def __init__(self,
                  call_train_hook: bool,
@@ -96,3 +104,49 @@ class EKAgent(abc.ABC):
         during this transition.
         """
         pass
+
+    def normalize_cards(self, cards: np.ndarray) -> np.ndarray:
+        """ Can be used within `record_hook` and `policy` to normalize the
+        `cards` array to make them more ANN friendly :-) """
+        cards[:, 0] /= EKAgent.MAX_CARD_SUM
+        cards[:, 1:14] /= EKAgent.MAX_CARD_VAL
+        return cards
+
+    def normalize_history(self, history: np.ndarray) -> np.ndarray:
+        """ Can be used within `record_hook` and `policy` to normalize the
+        `history` array to make them more ANN friendly :-) """
+        history[:, EKActionVecDefs.PLAYER] /= EKAgent.MAX_PLAYER_VAL
+        history[:, EKActionVecDefs.POINTER] /= EKAgent.MAX_POINTER_VAL
+        history[:, EKActionVecDefs.TARGET_CARD] /= EKAgent.MAX_CARD_VAL
+        history[:,
+            EKActionVecDefs.FUTURE_1,
+            EKActionVecDefs.FUTURE_2,
+            EKActionVecDefs.FUTURE_3
+        ] /= EKAgent.MAX_PLAYER_VAL
+        return history
+
+    def normalize_legal_actions(self, legal_actions: np.ndarray) -> np.ndarray:
+        """ Can be used within `record_hook` and `policy` to normalize the
+        `legal_actions` array to make them more ANN friendly :-) It works both
+        for single actions (record hook) as well as multiple (policy).
+        
+        **IMPORTANT!** Make sure you return an unnormalized action vector within
+        the policy method! """
+        actions = legal_actions.copy()
+        single = len(actions.shape) == 1
+        if single:
+            actions = np.expand_dims(actions, 0)
+
+        actions[:, EKActionVecDefs.PLAYER] /= EKAgent.MAX_PLAYER_VAL
+        actions[:, EKActionVecDefs.POINTER] /= EKAgent.MAX_POINTER_VAL
+        actions[:, EKActionVecDefs.TARGET_CARD] /= EKAgent.MAX_CARD_VAL
+        actions[:,
+            EKActionVecDefs.FUTURE_1,
+            EKActionVecDefs.FUTURE_2,
+            EKActionVecDefs.FUTURE_3
+        ] /= EKAgent.MAX_PLAYER_VAL
+
+        if single:
+            actions = np.squeeze(actions, 0)
+
+        return actions

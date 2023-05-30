@@ -7,16 +7,10 @@ from appendprobs import append_probabilities
 
 class EKTrainer:
     """
-    
+    Class to encapsulate the training testing process for the Exploding Kittens
+    environment. Can run a testing and training loop, and makes sure the agents
+    callback hooks get called at the appropriate time.
     """
-
-    # Constants for normalization purposes:
-    MAX_CARD_SUM = 52       # max cards you can ever see in 1 place
-    MAX_NUM_CARDS_VAL = 6   # max cards of same type you can ever see in 1 place
-    MAX_PLAYER_VAL = 4      # the max played idx value
-    MAX_POINTER_VAL = 6     # max possible val for pointer in action vec
-    MAX_CARD_VAL = 12       # max possible val for target_card
-
 
     def __init__(self,
             get_train_agents_func: (Callable[[], list[EKAgent]]),
@@ -63,8 +57,9 @@ class EKTrainer:
                 [idx, reward, cards, history, actions] = \
                     self.game.update_and_get_state(False)
                 
-                ip = agents[idx].include_probs
-                cards, history = self.modify_state(cards, history, ip)
+                if agents[idx].include_probs:
+                    cards = append_probabilities(
+                        cards, self.game.cards.total_deck)
 
                 if agents[idx].record and prev_cards[idx] != None:
                     agents[idx].record_hook(
@@ -117,8 +112,9 @@ class EKTrainer:
                 [idx, _, cards, history, actions] = \
                     self.game.update_and_get_state(False)
                 
-                ip = agents[idx].include_probs
-                cards, history = self.modify_state(cards, history, ip)
+                if agents[idx].include_probs:
+                    cards = append_probabilities(
+                        cards, self.game.cards.total_deck)
 
                 # No legal actions marks game over for this player:
                 if len(actions) == 0:
@@ -132,26 +128,3 @@ class EKTrainer:
                 self.game.take_action(idx, action)
 
         return win_table
-    
-    def modify_state(self, 
-            cards: np.ndarray,
-            history: np.ndarray,
-            add_probs: bool
-    ):
-        """ Normalizes the state and adds probabilities (if `add_probs`) """
-        
-        if add_probs:
-            cards = append_probabilities(cards, self.game.cards.total_deck)
-        cards[:, 0] /= EKTrainer.MAX_CARD_SUM
-        cards[:, 1:14] /= EKTrainer.MAX_CARD_VAL
-
-        history[:, EKActionVecDefs.PLAYER] /= EKTrainer.MAX_PLAYER_VAL
-        history[:, EKActionVecDefs.POINTER] /= EKTrainer.MAX_POINTER_VAL
-        history[:, EKActionVecDefs.TARGET_CARD] /= EKTrainer.MAX_CARD_VAL
-        history[:,
-            EKActionVecDefs.FUTURE_1,
-            EKActionVecDefs.FUTURE_2,
-            EKActionVecDefs.FUTURE_3
-        ] /= EKTrainer.MAX_PLAYER_VAL
-
-        return cards, history
