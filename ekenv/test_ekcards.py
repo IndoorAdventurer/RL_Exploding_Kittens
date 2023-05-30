@@ -1,5 +1,5 @@
 import unittest
-from ekcards import EKCards, EKCardTypes
+from ekenv import EKCards, EKCardTypes
 import numpy as np
 
 class EKCardsTests(unittest.TestCase):

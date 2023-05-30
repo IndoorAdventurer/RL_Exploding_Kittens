@@ -1,6 +1,5 @@
 import unittest
-from ekgame import EKGame, EKActionVecDefs
-from ekcards import EKCards, EKCardTypes
+from ekenv import EKGame, EKActionVecDefs, EKCards, EKCardTypes
 import numpy as np
 
 class EKGameTests(unittest.TestCase):

@@ -52,8 +52,12 @@ class EKTrainer:
 
             self.game.reset(num_agents)
 
-            # We keep playing as long as at least two players are playing:
-            while np.sum(self.game.still_playing) > 1:
+            # We keep playing as long as at least two players are playing
+            # We cap it at 90, as the theoretical maximum lies around this:
+            for _ in range(90):
+                if np.sum(self.game.still_playing) <= 1:
+                    break
+                
                 [idx, reward, cards, history, actions] = \
                     self.game.update_and_get_state(False)
                 
@@ -107,8 +111,12 @@ class EKTrainer:
         for _ in range(num_games):
             self.game.reset(num_agents)
 
-            # We keep playing as long as at least two players are playing:
-            while np.sum(self.game.still_playing) > 1:
+            # We keep playing as long as at least two players are playing
+            # We cap it at 90, as the theoretical maximum lies around this:
+            for _ in range(90):
+                if np.sum(self.game.still_playing) <= 1:
+                    break
+
                 [idx, _, cards, history, actions] = \
                     self.game.update_and_get_state(False)
                 
