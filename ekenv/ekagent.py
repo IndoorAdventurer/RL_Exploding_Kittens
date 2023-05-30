@@ -7,7 +7,33 @@ class EKAgent(abc.ABC):
     """
     An Abstract Base Class (ABC) for an agent in the Exploding Kittens
     environment. One can derive a class from this one in order to implement any
-    sort of learning agent. Please carefully read all documentation below ;-D 
+    sort of learning agent. Please carefully read all documentation below ;-D
+
+    It is important to note that the observable environment that gets presented
+    to the agent comes in the form of two arrays: `cards*` and `history`.
+    `cards*` is an `(N + 2) × (M + 1)` array, where `N` is the number of
+    players, and `M` is the number of different cards in the game (=13). For
+    each player `n` and card `m`, `cards[n + 2, m] = x`, means that the current
+    player knows that `n` has `x` cards of type `m`. `cards[0]` describes this
+    for the deck, and `cards[1]` for the discard pile. The current player always
+    thinks of itself as player `n = 1`, the player before as `n = 0`, and the
+    ones after as `n = {2, 3, 4}`. Finally, `cards[:, 0]` describe the total
+    number of cards. For example, `cards[0, 0] = 35` means that there are
+    currently 35 cards in the deck.
+
+    `history` has shape `H × L`, and contains the `H` last actions taken by the
+    agent itself and the other agents. Each action is represented by an `L`-
+    dimensional array, with `history[:, 0]` containing the index of the player
+    taking the action. Here, again, it thinks of itself as being index 1.
+
+    If, in the `__init__` method the `long_form_actions` is set to `False`, the
+    `policy` method receives an `X × L` dimensional array, containing the `X`
+    actions that are legal to take from the current state. Any of these should
+    then be returned directly by the function. Alternatively, if this boolean is
+    set to `True`, `policy` receives an 82-dimensional binary mask, having only
+    1's for legal actions. In this case, it should return an index into this
+    array.
+
     """
 
     # Constants for normalization purposes:
@@ -18,10 +44,10 @@ class EKAgent(abc.ABC):
     MAX_CARD_VAL = 12       # max possible val for target_card
 
     def __init__(self,
-                 call_train_hook: bool,
-                 call_record_hook: bool,
-                 long_form_actions: bool,
-                 include_probs: bool
+            call_train_hook: bool,
+            call_record_hook: bool,
+            long_form_actions: bool,
+            include_probs: bool
     ) -> None:
         """
         Constructor
@@ -49,7 +75,8 @@ class EKAgent(abc.ABC):
             include_probs (bool): if `True`, the `cards*` arguments in the
             methods below will include for each player `p` and card `c`, the
             probability that `p` has at least one `c`. (Of course, it will also
-            include probabilities for the deck).
+            include probabilities for the deck). This means it shape will become
+            `(N + 2) × (2 · M + 1)`
 
             PS: note that the non-long form action representations are identical
             to the ones provided in the `action_history` array argument of the
