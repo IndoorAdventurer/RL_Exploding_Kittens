@@ -53,8 +53,8 @@ class EKTrainer:
             self.game.reset(num_agents)
 
             # We keep playing as long as at least two players are playing
-            # We cap it at 90, as the theoretical maximum lies around this:
-            for _ in range(90):
+            # We cap it at 250, as the theoretical maximum lies around this:
+            for _ in range(250):
                 if np.sum(self.game.still_playing) <= 1:
                     break
                 
@@ -112,8 +112,8 @@ class EKTrainer:
             self.game.reset(num_agents)
 
             # We keep playing as long as at least two players are playing
-            # We cap it at 90, as the theoretical maximum lies around this:
-            for _ in range(90):
+            # We cap it at 250, as the theoretical maximum lies around this:
+            for _ in range(250):
                 if np.sum(self.game.still_playing) <= 1:
                     break
 

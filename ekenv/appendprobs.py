@@ -24,10 +24,10 @@ def append_probabilities(stacks: np.ndarray, total_deck: np.ndarray) -> np.ndarr
     n = stack_counts - np.sum(stacks[:, 1:], axis=1)
 
     # Calculate hypergeometric distribution for each stack-card-combination:
-    NminK = np.tile(N - K, (num_stacks, 1))
-    nmink = np.tile(n, (num_cards, 1)).T
+    NminK = np.reshape((N - K), [1, -1])
+    nmink = np.reshape(n, [-1, 1])
     NminKchoosenmink = comb_vec(NminK, nmink)
-    Nchoosen = np.tile(comb_vec(N, n), (num_cards, 1)).T
+    Nchoosen = np.reshape(comb_vec(N, n), [-1, 1])
     answ = 1 - NminKchoosenmink / Nchoosen
 
     # Setting everything we do know to 1:
