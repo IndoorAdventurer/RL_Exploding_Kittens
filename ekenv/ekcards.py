@@ -208,9 +208,10 @@ class EKCards:
         return picked_card
     
 
-    def known_pick(self, from_idx: int, to_idx: int, picked_card: int):
+    def known_pick(self, from_idx: int, to_idx: int, picked_card: int, public: bool = False):
         """ Remove `picked_card` from the `from_idx` stack, and place it on the
-        `to_idx` stack. """
+        `to_idx` stack. If `public` is `True`, it means everyone will be informed
+        about this action. """
 
         if self.cards[from_idx, picked_card] == 0:
             raise RuntimeError("Trying to pick card that is not there!")
@@ -227,13 +228,17 @@ class EKCards:
             self.known_map = np.clip(self.known_map, 0, np.Inf)
             return
 
-        # If from_idx corresponds to a player, this player now knows that the
-        # to_idx deck has one (more) of this card
-        if from_idx >= EKCards.FIRST_PLAYER_IDX:
+        # If public is true, it means everyone will be informed that to_idx now
+        # has one more of this card:
+        if public:
+            self.known_map[:, to_idx, picked_card] += 1
+        # Else, if from_idx corresponds to a player, this player now knows that
+        # the to_idx deck has one (more) of this card
+        elif from_idx >= EKCards.FIRST_PLAYER_IDX:
             player_idx = from_idx - EKCards.FIRST_PLAYER_IDX
             self.known_map[player_idx, to_idx, picked_card] += 1
         
-        # Any card could have been taken from the from_idx deck, so if you knew
+        # Any card could have been taken from the from_idx stack, so if you knew
         # this deck had one card of a certain type, you now dont know anything:
         self.known_map[:, from_idx, :] -= 1
 
@@ -317,8 +322,9 @@ class EKCards:
             tmp_deck[picked_card] -= 1
         
         # The player that is peeking now knows these cards are in the deck:
-        self.known_map[played_idx, EKCards.DECK_IDX, top_3] = \
-            np.clip(self.known_map[played_idx, EKCards.DECK_IDX, top_3], 1, np.Inf)
+        nowknown = top_3[top_3 >= 0]
+        self.known_map[played_idx, EKCards.DECK_IDX, nowknown] = \
+            np.clip(self.known_map[played_idx, EKCards.DECK_IDX, nowknown], 1, np.Inf)
 
         return top_3.copy()
     

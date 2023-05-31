@@ -591,14 +591,11 @@ class EKGame:
         
         # Three cats: take a card of your choosing from other (if it has it):
         elif ac[EKActionVecDefs.PLAY_THREE_CATS] == 1:
-            frm = ac[EKActionVecDefs.POINTER] + EKCards.FIRST_PLAYER_IDX
+            frm = int(ac[EKActionVecDefs.POINTER] + EKCards.FIRST_PLAYER_IDX)
             to = player + EKCards.FIRST_PLAYER_IDX
-            card = ac[EKActionVecDefs.TARGET_CARD]
+            card = int(ac[EKActionVecDefs.TARGET_CARD])
             if self.cards.cards[int(frm), int(card)] > 0:
-                self.cards.known_pick(int(frm), to, int(card))
-
-                # Asking a card is public, so now everyone knows you have it:
-                self.cards.known_map[:, to, int(card)] += 1
+                self.cards.known_pick(frm, to, card, True)
 
         self.unprocessed_action = np.zeros(0)
         

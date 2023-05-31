@@ -135,22 +135,24 @@ class EKAgent(abc.ABC):
     def normalize_cards(self, cards: np.ndarray) -> np.ndarray:
         """ Can be used within `record_hook` and `policy` to normalize the
         `cards` array to make them more ANN friendly :-) """
-        cards[:, 0] /= EKAgent.MAX_CARD_SUM
-        cards[:, 1:14] /= EKAgent.MAX_CARD_VAL
-        return cards
+        cards_copy = cards.copy()
+        cards_copy[:, 0] /= EKAgent.MAX_CARD_SUM
+        cards_copy[:, 1:14] /= EKAgent.MAX_CARD_VAL
+        return cards_copy
 
     def normalize_history(self, history: np.ndarray) -> np.ndarray:
         """ Can be used within `record_hook` and `policy` to normalize the
         `history` array to make them more ANN friendly :-) """
-        history[:, EKActionVecDefs.PLAYER] /= EKAgent.MAX_PLAYER_VAL
-        history[:, EKActionVecDefs.POINTER] /= EKAgent.MAX_POINTER_VAL
-        history[:, EKActionVecDefs.TARGET_CARD] /= EKAgent.MAX_CARD_VAL
-        history[:,
-            EKActionVecDefs.FUTURE_1,
+        history_copy = history.copy()
+        history_copy[:, EKActionVecDefs.PLAYER] /= EKAgent.MAX_PLAYER_VAL
+        history_copy[:, EKActionVecDefs.POINTER] /= EKAgent.MAX_POINTER_VAL
+        history_copy[:, EKActionVecDefs.TARGET_CARD] /= EKAgent.MAX_CARD_VAL
+        history_copy[:,
+            [EKActionVecDefs.FUTURE_1,
             EKActionVecDefs.FUTURE_2,
-            EKActionVecDefs.FUTURE_3
+            EKActionVecDefs.FUTURE_3]
         ] /= EKAgent.MAX_PLAYER_VAL
-        return history
+        return history_copy
 
     def normalize_legal_actions(self, legal_actions: np.ndarray) -> np.ndarray:
         """ Can be used within `record_hook` and `policy` to normalize the
@@ -168,9 +170,9 @@ class EKAgent(abc.ABC):
         actions[:, EKActionVecDefs.POINTER] /= EKAgent.MAX_POINTER_VAL
         actions[:, EKActionVecDefs.TARGET_CARD] /= EKAgent.MAX_CARD_VAL
         actions[:,
-            EKActionVecDefs.FUTURE_1,
+            [EKActionVecDefs.FUTURE_1,
             EKActionVecDefs.FUTURE_2,
-            EKActionVecDefs.FUTURE_3
+            EKActionVecDefs.FUTURE_3]
         ] /= EKAgent.MAX_PLAYER_VAL
 
         if single:

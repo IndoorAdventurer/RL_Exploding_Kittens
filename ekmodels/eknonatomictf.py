@@ -1,17 +1,20 @@
 import torch
 from torch import nn
-from ekpreprocessnw import EKPreprocessNW
+from .ekpreprocessnw import EKPreprocessNW
 
 
 class EKNonAtomicTF(nn.Module):
 
-    def __init__(self) -> None:
+    def __init__(self,
+        cards_dim: int = 27,
+        history_len: int = 11
+    ) -> None:
         super().__init__()
 
         d_model = 256
 
-        self.cards_preproc = EKPreprocessNW(7, 27, d_model, False)
-        self.history_preproc = EKPreprocessNW(10, 15, d_model, False)
+        self.cards_preproc = EKPreprocessNW(7, cards_dim, d_model, False)
+        self.history_preproc = EKPreprocessNW(history_len, 15, d_model, False)
         
         self.transformer = nn.Transformer(
             d_model=d_model,

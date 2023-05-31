@@ -202,6 +202,12 @@ class EKCardsTests(unittest.TestCase):
         future = cards.see_future(0)
         self.assertTrue(np.all(cards.known_map[0, EKCards.DECK_IDX, future] >= 1),
             "The player looking at the future should now know that these cards are in the deck")
+        self.assertTrue(np.all(cards.known_map[1:, EKCards.DECK_IDX, future] != 1),
+            "No one else should know the future: we just started so nobody else could have drawn a future yet.")
+        for f_idx in range(len(cards.known_map[0, 0])):
+            if f_idx not in future:
+                self.assertTrue(cards.known_map[0, 0, f_idx] in [0, 4],
+                    "We cant know anything other than the future, except that we have 4 exploding kittens in the deck")
         real_future = np.zeros_like(future)
         for idx in range(len(real_future)):
             real_future[idx] = cards.random_pick(EKCards.DECK_IDX, EKCards.FIRST_PLAYER_IDX)

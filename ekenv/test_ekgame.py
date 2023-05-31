@@ -657,6 +657,10 @@ class EKGameTests(unittest.TestCase):
                     "Number of players can only monotonically decrease")
                 still_playing = new_still_playing
 
+                self.assertTrue(np.all(
+                    cards[:, 0] >= np.sum(cards[:, 1:], axis=1)
+                ), f"You can never think someone has more cards than he/she actually has.\n{cards}\n{g.cards.known_map[player]}\n{history}")
+
                 if len(actions) == 0:
                     continue
 
