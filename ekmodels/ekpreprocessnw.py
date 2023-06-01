@@ -27,6 +27,9 @@ class EKPreprocessNW(nn.Module):
 
         self.affine_projection = nn.Linear(in_dim, out_dim)
 
+        if cls_token:
+            self.learned_token = nn.Linear(1, out_dim, False)
+
         # Position encodings as in Vaswani et al, roughly
         # (https://pytorch.org/tutorials/beginner/transformer_tutorial.html):
         pos_encs = torch.zeros([1, max_len, out_dim])
@@ -44,9 +47,24 @@ class EKPreprocessNW(nn.Module):
         inp_shape = embeddings.shape
         embeddings = embeddings.view(-1, inp_shape[-1])
         embeddings = self.affine_projection(embeddings)
-        embeddings = embeddings.view(inp_shape[0], inp_shape[1], -1)
+        embeddings = embeddings.view(inp_shape[0], inp_shape[1], embeddings.shape[-1])
 
         # Add position encodings:
         embeddings += self.pos_encs[:, :inp_shape[1]]
+
+        # Prepend class token:
+        if self.cls_token:
+            tok = self.learned_token(torch.tensor([1.],
+                device=embeddings.device).unsqueeze(0))
+            tok = tok.unsqueeze(0)
+            tok = tok.repeat(inp_shape[0], 1, 1)
+            embeddings = torch.concatenate([tok, embeddings], 1)
+
+            if mask != None:
+                prepend = torch.ones([inp_shape[0], 1],
+                    dtype=torch.float32, device=mask.device)
+                mask = torch.concatenate([prepend, mask], 1)
+
+            return embeddings, mask
 
         return embeddings

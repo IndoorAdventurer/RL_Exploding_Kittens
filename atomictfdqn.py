@@ -1,11 +1,11 @@
 import numpy as np
 import torch
 from ekenv import EKAgent, EKTrainer, EKRandomAgent
-from ekmodels import EKNonAtomicTF
-from random import shuffle
+from ekmodels import EKAtomicTF
+from random import shuffle, choice
 
 
-class NonAtomicTFDQN(EKAgent):
+class AtomicTFDQN(EKAgent):
     """
     A Transformer-based DQN which uses a non-atomic description of the action
     space.
@@ -20,7 +20,7 @@ class NonAtomicTFDQN(EKAgent):
         include_probs: bool
     ) -> None:
         super().__init__(call_train_hook, call_record_hook,
-                         False, include_probs)
+                         True, include_probs)
         self.model = model
         self.buffer = buffer
         self.epsilon = epsilon
@@ -33,34 +33,30 @@ class NonAtomicTFDQN(EKAgent):
         
         # Random action with probability epsilon
         if np.random.random() < self.epsilon:
-            choice = np.random.randint(0, len(legal_actions))
-            return legal_actions[choice]
+            options = np.where(legal_actions == 1)[0]
+            return choice(options).item()
         
         self.model.eval()
 
         cards_norm = self.normalize_cards(cards)
-        hist_norm = self.normalize_history(action_history)
-        acs_norm = self.normalize_legal_actions(legal_actions)
-
-        # Creating a batch of all actions:
-        cards_norm = np.expand_dims(cards_norm, 0)
-        cards_norm = np.repeat(cards_norm, len(acs_norm), axis=0)
         cards_norm = torch.tensor(cards_norm, device="cuda", dtype=torch.float32)
+        cards_norm = cards_norm.unsqueeze(0)
 
-        hist_norm = np.expand_dims(hist_norm, 0)
-        hist_norm = np.repeat(hist_norm, len(acs_norm), axis=0)
-        acs_norm = np.expand_dims(acs_norm, axis=1)
-        hist_norm = np.concatenate([acs_norm, hist_norm], axis=1)
+        hist_norm = self.normalize_history(action_history)
         hist_norm = torch.tensor(hist_norm, device="cuda", dtype=torch.float32)
+        hist_norm = hist_norm.unsqueeze(0)
 
         with torch.no_grad():
             q_vals = self.model(cards_norm, hist_norm, None, None) \
-                .cpu().detach().numpy().squeeze()
+                .detach().cpu().numpy().squeeze()
         
-        choice = np.argmax(q_vals)
+        q_vals[legal_actions == 0] = -float("inf")
 
-        return legal_actions[choice]
+        pick = np.argmax(q_vals).item()
 
+        assert(legal_actions[pick] == 1)
+
+        return pick
 
     def train_hook(self) -> None:
         pass
@@ -78,8 +74,8 @@ class NonAtomicTFDQN(EKAgent):
 
 if __name__ == "__main__":
 
-    model = EKNonAtomicTF().to("cuda")
-    agent = NonAtomicTFDQN(model, None, 0.9, True, True, True)
+    model = EKAtomicTF().to("cuda")
+    agent = AtomicTFDQN(model, None, 0.9, False, False, True)
     rando = EKRandomAgent()
 
     def train_agents() -> list[EKAgent]:

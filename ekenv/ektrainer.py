@@ -14,7 +14,8 @@ class EKTrainer:
 
     def __init__(self,
             get_train_agents_func: (Callable[[], list[EKAgent]]),
-            get_test_agents_func: Callable[[], list[EKAgent]]
+            get_test_agents_func: Callable[[], list[EKAgent]],
+            game_over_hook: Callable[[bool], None] | None = None
     ) -> None:
         """
         Constructor
@@ -30,10 +31,15 @@ class EKTrainer:
             called at the start of every testing episode, and should return a
             list of agents for testing. Also here minimum is 2 agents, maximum
             is 5.
+
+            game_over_hook ((bool) -> None) | None: Optional hook function that
+            gets called at the end of every game. Receives a bool that is `True`
+            only in the training loop.
         """
         self.game = EKGame()
         self.get_train_agents_func = get_train_agents_func
         self.get_test_agents_func = get_test_agents_func
+        self.game_over_hook = game_over_hook
     
     def training_loop(self, num_games: int):
         """
@@ -80,6 +86,12 @@ class EKTrainer:
 
                 # No legal actions marks game over for this player:
                 if len(actions) == 0:
+                    
+                    # This inner if has to do with a bug I haven't found the
+                    # cause of yet. Need to fix it FIXME TODO
+                    if self.game.still_playing[idx]:
+                        break
+                    
                     continue
 
                 if agents[idx].long_form == True:
@@ -91,6 +103,9 @@ class EKTrainer:
                 prev_cards[idx] = cards
                 prev_history[idx] = history
                 prev_action[idx] = action
+            
+            if self.game_over_hook != None:
+                self.game_over_hook(True)
 
 
     def testing_loop(self, num_games: int) -> np.ndarray:
@@ -134,5 +149,8 @@ class EKTrainer:
                 
                 action = agents[idx].policy(cards, history, actions)
                 self.game.take_action(idx, action)
+
+            if self.game_over_hook != None:
+                self.game_over_hook(False)
 
         return win_table
