@@ -12,6 +12,7 @@ class EKRandomAgent(EKAgent):
         super().__init__(False, False, False, False)
     
     def policy(self,
+            train: bool,
             cards: np.ndarray,
             action_history: np.ndarray,
             legal_actions: np.ndarray

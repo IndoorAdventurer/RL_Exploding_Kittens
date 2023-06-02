@@ -92,6 +92,7 @@ class EKAgent(abc.ABC):
     
     abc.abstractmethod
     def policy(self,
+            train: bool,
             cards: np.ndarray,
             action_history: np.ndarray,
             legal_actions: np.ndarray
@@ -100,7 +101,8 @@ class EKAgent(abc.ABC):
         Takes the current observable state (`cards` and `action_history`) and a
         description of legal actions (see documentation of constructor) as
         input, and outputs the next action that should be taken (either as int
-        or array. Again, see documentation of constructor).
+        or array. Again, see documentation of constructor). If using an epsilon
+        greedy approach, it should ignore epsilon when `train` is `False`.
         """
         pass
 
@@ -119,7 +121,8 @@ class EKAgent(abc.ABC):
             action: int | np.ndarray,
             reward: float,
             cards_tp1: np.ndarray,
-            action_history_tp1: np.ndarray
+            action_history_tp1: np.ndarray,
+            legal_actions_tp1: np.ndarray
     ) -> None:
         """
         Gets called when there is a new state transition that can be put in, for
@@ -127,8 +130,9 @@ class EKAgent(abc.ABC):
         form the state (`_t` for current state, `_tp1` for next state (t+1)).
         `action` is the action that was taken by the agent (either an int or
         an array, depending on if `long_form_actions` was set to `True` in the
-        `__init__` call). Finally, `reward` is the reward that was observed
-        during this transition.
+        `__init__` call). `reward` is the reward that was observed during this
+        transition. Lastly, `legal_actions_tp1` describes the actions that are
+        legal to take from state `t+1`.
         """
         pass
 

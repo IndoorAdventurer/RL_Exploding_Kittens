@@ -26,13 +26,14 @@ class NonAtomicTFDQN(EKAgent):
         self.epsilon = epsilon
     
     def policy(self,
+            train: bool,
             cards: np.ndarray,
             action_history: np.ndarray,
             legal_actions: np.ndarray
     ) -> int | np.ndarray:
         
         # Random action with probability epsilon
-        if np.random.random() < self.epsilon:
+        if train and np.random.random() < self.epsilon:
             choice = np.random.randint(0, len(legal_actions))
             return legal_actions[choice]
         
@@ -71,7 +72,8 @@ class NonAtomicTFDQN(EKAgent):
             action: int | np.ndarray,
             reward: float,
             cards_tp1: np.ndarray,
-            action_history_tp1: np.ndarray
+            action_history_tp1: np.ndarray,
+            legal_actions_tp1: np.ndarray
     ) -> None:
         pass
 

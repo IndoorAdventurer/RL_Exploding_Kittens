@@ -67,37 +67,43 @@ class EKTrainer:
                 [idx, reward, cards, history, actions] = \
                     self.game.update_and_get_state(False)
                 
+                player_dead = len(actions) == 0
+                
                 if agents[idx].include_probs:
                     cards = append_probabilities(
                         cards, self.game.cards.total_deck)
 
-                if agents[idx].record and prev_cards[idx] != None:
+                if agents[idx].long_form == True:
+                    actions = self.game.get_legal_actions(True)
+                
+                if agents[idx].record and prev_cards[idx] is not None:
+                    if len(actions) == 0:
+                        actions = np.zeros(82, dtype=np.int64)
+                    
                     agents[idx].record_hook(
                         prev_cards[idx],
                         prev_history[idx],
                         prev_action[idx],
                         reward,
                         cards,
-                        history
+                        history,
+                        actions
                     )
 
                 if agents[idx].train:
                     agents[idx].train_hook()
 
-                # No legal actions marks game over for this player:
-                if len(actions) == 0:
+                if player_dead:
                     
                     # This inner if has to do with a bug I haven't found the
                     # cause of yet. Need to fix it FIXME TODO
                     if self.game.still_playing[idx]:
+                        print("TODO: fix bug")
                         break
                     
                     continue
-
-                if agents[idx].long_form == True:
-                    actions = self.game.get_legal_actions(True)
                 
-                action = agents[idx].policy(cards, history, actions)
+                action = agents[idx].policy(True, cards, history, actions)
                 self.game.take_action(idx, action)
 
                 prev_cards[idx] = cards
@@ -108,7 +114,7 @@ class EKTrainer:
                 self.game_over_hook(True)
 
 
-    def testing_loop(self, num_games: int) -> np.ndarray:
+    def testing_loop(self, num_games: int):
         """
         Runs multiple games for evaluation purposes. The agents selected for
         this are obtained via the `get_test_agents_func` function given to the
@@ -121,6 +127,7 @@ class EKTrainer:
         # For testing we keep the same agents for all games:
         agents = self.get_test_agents_func()
         num_agents = len(agents)
+        reward_list = np.zeros(num_agents)
         win_table = np.zeros([num_agents, num_agents], dtype=np.int64)
 
         for _ in range(num_games):
@@ -132,8 +139,10 @@ class EKTrainer:
                 if np.sum(self.game.still_playing) <= 1:
                     break
 
-                [idx, _, cards, history, actions] = \
+                [idx, reward, cards, history, actions] = \
                     self.game.update_and_get_state(False)
+                
+                reward_list[idx] += reward
                 
                 if agents[idx].include_probs:
                     cards = append_probabilities(
@@ -147,10 +156,10 @@ class EKTrainer:
                 if agents[idx].long_form == True:
                     actions = self.game.get_legal_actions(True)
                 
-                action = agents[idx].policy(cards, history, actions)
+                action = agents[idx].policy(False, cards, history, actions)
                 self.game.take_action(idx, action)
 
             if self.game_over_hook != None:
                 self.game_over_hook(False)
 
-        return win_table
+        return reward_list, win_table
