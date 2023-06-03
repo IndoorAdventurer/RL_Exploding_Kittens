@@ -11,7 +11,7 @@ class EKAtomicTF(nn.Module):
     ) -> None:
         super().__init__()
 
-        d_model = 256
+        d_model = 128
 
         self.cards_preproc = EKPreprocessNW(7, cards_dim, d_model, True)
         self.history_preproc = EKPreprocessNW(history_len, 15, d_model, True)
@@ -19,9 +19,9 @@ class EKAtomicTF(nn.Module):
         self.transformer = nn.Transformer(
             d_model=d_model,
             nhead=4,
-            num_encoder_layers=3,
-            num_decoder_layers=3,
-            dim_feedforward=512,
+            num_encoder_layers=2,
+            num_decoder_layers=2,
+            dim_feedforward=256,
             batch_first=True
         )
 
@@ -44,9 +44,9 @@ class EKAtomicTF(nn.Module):
 
 if __name__ == "__main__":
     
-    nw = EKAtomicTF()
+    nw = EKAtomicTF(14)
 
-    cards = torch.ones([3, 7, 27])
+    cards = torch.ones([3, 7, 14])
     cards_mask = torch.ones([3, 7])
     cards_mask[:, 6:] = 0
 
@@ -57,3 +57,5 @@ if __name__ == "__main__":
     out = nw(cards, history, cards_mask, history_mask)
 
     print(out.shape)
+
+    print(sum(p.numel() for p in nw.parameters()))

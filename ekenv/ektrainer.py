@@ -1,4 +1,5 @@
 import numpy as np
+from random import shuffle
 from typing import Callable
 from .ekagent import EKAgent
 from .ekgame import EKGame, EKActionVecDefs
@@ -123,6 +124,9 @@ class EKTrainer:
         This function returns an `N × N` array, where `arr[x, y] = z` means that
         player `x` finished ahead of player `y`, `z` times.
         """
+
+        # TODO: same thing as in training loop with error because it fucks up
+        # the win_table
         
         # For testing we keep the same agents for all games:
         agents = self.get_test_agents_func()
@@ -130,8 +134,20 @@ class EKTrainer:
         reward_list = np.zeros(num_agents)
         win_table = np.zeros([num_agents, num_agents], dtype=np.int64)
 
+        # We will shuffle, so keep track of original indeces to invert later:
+        indeces = np.arange(num_agents)
+
         for _ in range(num_games):
             self.game.reset(num_agents)
+
+            # Shuffle:
+            shuf = np.arange(num_agents)
+            shuffle(shuf)
+            agents = [agents[a_idx] for a_idx in shuf]
+            reward_list = reward_list[shuf]
+            win_table = win_table[:, shuf]
+            win_table = win_table[shuf]
+            indeces = indeces[shuf]
 
             # We keep playing as long as at least two players are playing
             # We cap it at 250, as the theoretical maximum lies around this:
@@ -161,5 +177,12 @@ class EKTrainer:
 
             if self.game_over_hook != None:
                 self.game_over_hook(False)
+        
+        # Invert all the shuffles:
+        inverse = np.zeros_like(indeces)
+        inverse[indeces] = np.arange(num_agents)
+        reward_list = reward_list[inverse]
+        win_table = win_table[:, inverse]
+        win_table = win_table[inverse]
 
         return reward_list, win_table

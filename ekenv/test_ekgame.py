@@ -659,9 +659,14 @@ class EKGameTests(unittest.TestCase):
 
                 self.assertTrue(np.all(
                     cards[:, 0] >= np.sum(cards[:, 1:], axis=1)
-                ), f"You can never think someone has more cards than he/she actually has.\n{cards}\n{g.cards.known_map[player]}\n{history}")
+                ), f"You can never think someone has more cards than he/she actually has.")
+
+                self.assertTrue(reward >= -1 and reward <= 1,
+                    "Rewards are only ever between -1 and +1")
 
                 if len(actions) == 0:
+                    self.assertTrue(g.still_playing[player] == False,
+                        "You can only get no actions when you are out of the game.")
                     continue
 
                 g.take_action(player, actions[np.random.randint(len(actions))])

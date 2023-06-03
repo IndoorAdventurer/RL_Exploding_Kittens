@@ -139,7 +139,7 @@ class EKAgent(abc.ABC):
     def normalize_cards(self, cards: np.ndarray) -> np.ndarray:
         """ Can be used within `record_hook` and `policy` to normalize the
         `cards` array to make them more ANN friendly :-) """
-        cards_copy = cards.copy()
+        cards_copy = cards.copy().astype(np.float64)
         cards_copy[:, 0] /= EKAgent.MAX_CARD_SUM
         cards_copy[:, 1:14] /= EKAgent.MAX_CARD_VAL
         return cards_copy
@@ -147,7 +147,7 @@ class EKAgent(abc.ABC):
     def normalize_history(self, history: np.ndarray) -> np.ndarray:
         """ Can be used within `record_hook` and `policy` to normalize the
         `history` array to make them more ANN friendly :-) """
-        history_copy = history.copy()
+        history_copy = history.copy().astype(np.float64)
         history_copy[:, EKActionVecDefs.PLAYER] /= EKAgent.MAX_PLAYER_VAL
         history_copy[:, EKActionVecDefs.POINTER] /= EKAgent.MAX_POINTER_VAL
         history_copy[:, EKActionVecDefs.TARGET_CARD] /= EKAgent.MAX_CARD_VAL
@@ -165,7 +165,7 @@ class EKAgent(abc.ABC):
         
         **IMPORTANT!** Make sure you return an unnormalized action vector within
         the policy method! """
-        actions = legal_actions.copy()
+        actions = legal_actions.copy().astype(np.float64)
         single = len(actions.shape) == 1
         if single:
             actions = np.expand_dims(actions, 0)

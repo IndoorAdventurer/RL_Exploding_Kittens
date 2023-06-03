@@ -350,7 +350,7 @@ class EKGame:
         if self.nope_player != -1:
             return self.nope_player
         if len(self.unprocessed_action) != 0 and \
-                self.unprocessed_action[EKActionVecDefs.PLAY_FAVOR] == 1:
+                self.unprocessed_action[EKActionVecDefs.PLAY_FAVOR] == 1: # FIXME: sometimes you get here while player is not playing...
             return int(self.unprocessed_action[EKActionVecDefs.POINTER])
         self.cur_player_is_major = True
         return self.major_player

@@ -25,7 +25,7 @@ class AtomicTFDQN(EKAgent):
         super().__init__(call_train_hook, call_record_hook,
                          True, include_probs)
         self.model = model
-        self.target_model = EKAtomicTF().to("cuda")
+        self.target_model = EKAtomicTF(14).to("cuda")
         self.target_model.load_state_dict(model.state_dict())
         self.loss = torch.nn.MSELoss()
         self.optim = optimizer
@@ -129,6 +129,9 @@ class AtomicTFDQN(EKAgent):
         cards_tp1 = self.normalize_cards(cards_tp1)
         action_history_tp1 = self.normalize_history(action_history_tp1)
 
+        if reward < -1 or reward > 0.2:
+            print(reward)
+
         self.buffer.append(
             cards_t, action_history_t, action, reward, cards_tp1,
             action_history_tp1, legal_actions_tp1
@@ -143,16 +146,18 @@ class AtomicTFDQN(EKAgent):
 
 if __name__ == "__main__":
 
-    model = EKAtomicTF().to("cuda")
+    model = EKAtomicTF(cards_dim=14).to("cuda")
     optim = torch.optim.RMSprop(model.parameters(), lr=1e-4)
-    rpbuf = EKAtomicReplayBuffer(10_000, 10)
-    agent = AtomicTFDQN(model, optim, rpbuf, 256, 0.9, True, True, True)
+    rpbuf = EKAtomicReplayBuffer(100_000, 10)
+    agent = AtomicTFDQN(model, optim, rpbuf, 64, 0.5, True, True, False)
     rando = EKRandomAgent()
 
     def train_agents() -> list[EKAgent]:
         """ Should return a list of agents for training. This list should contain at
         least 2 agents, and at most 5 agents. """
         al = [agent, rando]
+        if np.random.random() > 0.5:
+            al += [agent]
         shuffle(al)
         return al
 
@@ -166,8 +171,9 @@ if __name__ == "__main__":
     def end_of_game(is_training: bool):
         if is_training:
             print("|", end="", flush=True)
-            delta = agent.epsilon - 0.05
-            agent.epsilon = 0.05 + 0.995 * delta
+            target_eps = 0.05
+            delta = agent.epsilon - target_eps
+            agent.epsilon = target_eps + 0.98 * delta
 
             global game_idx
             game_idx = (game_idx + 1) % 5
@@ -195,4 +201,5 @@ if __name__ == "__main__":
         results = trainer.testing_loop(num_testing_games)
         print(f" Epsilon: {agent.epsilon}, buffer size: {len(rpbuf.buf)}")
         print(results[0])
+        print(results[1])
         # Do stuff with the results here!
