@@ -1,6 +1,7 @@
 import unittest
 from ekenv import EKGame, EKActionVecDefs, EKCards, EKCardTypes
 import numpy as np
+import random
 
 class EKGameTests(unittest.TestCase):
     
@@ -670,6 +671,47 @@ class EKGameTests(unittest.TestCase):
                     continue
 
                 g.take_action(player, actions[np.random.randint(len(actions))])
+    
+    def test_the_big_one_long_form(self):
+        """ Same as above but now with long form action selection """
+        g = EKGame()
+        for det_seed in range(1996, 2100):
+            # print(f"({det_seed})", end="", flush=True)
+            # np.random.seed(det_seed)
+            # random.seed(det_seed + 1) # +1 so not same if they happen to use same generator :-p
+
+            num_players = np.random.randint(2, 6)
+            g.reset(num_players)
+
+            still_playing = np.sum(g.still_playing)
+
+            while np.sum(g.still_playing) > 1:
+                [player, reward, cards, history, actions] = g.update_and_get_state(False)
+
+                player_dead = len(actions) == 0
+                actions = g.get_legal_actions(True)
+                
+                new_still_playing = np.sum(g.still_playing)
+                self.assertTrue(new_still_playing <= still_playing,
+                    "Number of players can only monotonically decrease")
+                still_playing = new_still_playing
+
+                self.assertTrue(np.all(
+                    cards[:, 0] >= np.sum(cards[:, 1:], axis=1)
+                ), f"You can never think someone has more cards than he/she actually has.")
+
+                self.assertTrue(reward >= -1 and reward <= 1,
+                    "Rewards are only ever between -1 and +1")
+
+                if player_dead:
+                    self.assertTrue(g.still_playing[player] == False,
+                        "You can only get no actions when you are out of the game.")
+                    continue
+
+                options = np.where(actions == 1)[0]
+                pick = random.choice(options).item()
+
+                g.take_action(player, pick)
 
 
 if __name__ == "__main__":

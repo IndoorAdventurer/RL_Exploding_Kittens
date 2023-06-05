@@ -48,8 +48,12 @@ class AtomicTFDQN(EKAgent):
         # Random action with probability epsilon
         if train and np.random.random() < self.epsilon:
             options = np.where(legal_actions == 1)[0]
-            return choice(options).item()
-        
+            pick = choice(options).item()
+
+            assert(legal_actions[pick] == 1)
+
+            return pick
+
         self.model.eval()
 
         cards_norm = self.normalize_cards(cards)

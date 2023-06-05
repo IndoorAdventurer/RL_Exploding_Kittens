@@ -491,6 +491,7 @@ class EKGame:
         index 0, and the players after as index 1 to N. This function converts
         actions players take back into a global point of view.
         """
+        action = action.copy()
         action[EKActionVecDefs.PLAYER] = player
         if action[EKActionVecDefs.PLAY_FAVOR] == 1 or \
                 action[EKActionVecDefs.PLAY_TWO_CATS] == 1 or \
