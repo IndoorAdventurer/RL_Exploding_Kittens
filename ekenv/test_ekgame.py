@@ -664,6 +664,12 @@ class EKGameTests(unittest.TestCase):
 
                 self.assertTrue(reward >= -1 and reward <= 1,
                     "Rewards are only ever between -1 and +1")
+                
+                self.assertTrue(np.all(actions[:, EKActionVecDefs.PLAYER] == 1),
+                    "We should always see player 1 as the one taking the action, as actions are presented player-centric")
+                
+                self.assertTrue(np.all((actions[:, EKActionVecDefs.POINTER] != 1) | (actions[:, EKActionVecDefs.DEFUSE_KITTEN] == 1)),
+                    "We can never select ourselves: pointer can only be 1 if it refers to index to place back kitten to")
 
                 if len(actions) == 0:
                     self.assertTrue(g.still_playing[player] == False,

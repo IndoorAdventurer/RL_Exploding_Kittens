@@ -2,13 +2,13 @@ import numpy as np
 import torch
 from random import shuffle, choice
 from ekenv import EKAgent, EKTrainer, EKRandomAgent
-from ekmodels import EKAtomicTF
+from ekmodels import EKTransformer
 from ekutils import EKAtomicReplayBuffer
 
 
 class AtomicTFDQN(EKAgent):
     """
-    A Transformer-based DQN which uses a atomic description of the action
+    A Transformer-based DQN which uses an atomic description of the action
     space.
     """
 
@@ -25,7 +25,7 @@ class AtomicTFDQN(EKAgent):
         super().__init__(call_train_hook, call_record_hook,
                          True, include_probs)
         self.model = model
-        self.target_model = EKAtomicTF(14).to("cuda")
+        self.target_model = EKTransformer(14, 10, True, 82).to("cuda")
         self.target_model.load_state_dict(model.state_dict())
         self.loss = torch.nn.MSELoss()
         self.optim = optimizer
@@ -78,10 +78,11 @@ class AtomicTFDQN(EKAgent):
 
     def train_hook(self) -> None:
         
-        if len(self.buffer.buf) < self.batch_size:
+        if len(self.buffer.buf) < 10_000:
             return
         
         self.model.train()
+        self.target_model.eval()
         
         [   # This makes me want to cry :'-(
             cards_t,
@@ -110,6 +111,10 @@ class AtomicTFDQN(EKAgent):
         next_preds[next_preds == -torch.inf] = 0
 
         targets = next_preds + reward
+
+        # For terminal state only reward:
+        terminal_states = legal_actions_tp1.sum(1) == 0
+        targets[terminal_states] = reward[terminal_states]
         
         loss = self.loss(predictions, targets)
         self.loss_cnt += 1
@@ -133,9 +138,6 @@ class AtomicTFDQN(EKAgent):
         cards_tp1 = self.normalize_cards(cards_tp1)
         action_history_tp1 = self.normalize_history(action_history_tp1)
 
-        if reward < -1 or reward > 0.2:
-            print(reward)
-
         self.buffer.append(
             cards_t, action_history_t, action, reward, cards_tp1,
             action_history_tp1, legal_actions_tp1
@@ -150,18 +152,17 @@ class AtomicTFDQN(EKAgent):
 
 if __name__ == "__main__":
 
-    model = EKAtomicTF(cards_dim=14).to("cuda")
-    optim = torch.optim.RMSprop(model.parameters(), lr=1e-4)
+    model = EKTransformer(14, 10, True, 82).to("cuda")
+    optim = torch.optim.RMSprop(model.parameters(), lr=5e-4)
     rpbuf = EKAtomicReplayBuffer(100_000, 10)
     agent = AtomicTFDQN(model, optim, rpbuf, 64, 0.5, True, True, False)
     rando = EKRandomAgent()
+    init_fill = 10_000
 
     def train_agents() -> list[EKAgent]:
         """ Should return a list of agents for training. This list should contain at
         least 2 agents, and at most 5 agents. """
         al = [agent, rando]
-        if np.random.random() > 0.5:
-            al += [agent]
         shuffle(al)
         return al
 
@@ -175,12 +176,13 @@ if __name__ == "__main__":
     def end_of_game(is_training: bool):
         if is_training:
             print("|", end="", flush=True)
-            target_eps = 0.05
-            delta = agent.epsilon - target_eps
-            agent.epsilon = target_eps + 0.98 * delta
+            if len(rpbuf.buf) > init_fill:
+                target_eps = 0.05
+                delta = agent.epsilon - target_eps
+                agent.epsilon = target_eps + 0.98 * delta
 
             global game_idx
-            game_idx = (game_idx + 1) % 5
+            game_idx = (game_idx + 1) % 50
             if game_idx == 0:
                 agent.update_target()
                 print(f" Loss: {agent.avg_loss}")
@@ -202,8 +204,9 @@ if __name__ == "__main__":
         print(f"---EPOCH-{idx}" + "-" * 20)
         
         trainer.training_loop(num_training_games)
-        results = trainer.testing_loop(num_testing_games)
-        print(f" Epsilon: {agent.epsilon}, buffer size: {len(rpbuf.buf)}")
-        print(results[0])
-        print(results[1])
-        # Do stuff with the results here!
+        if (len(rpbuf.buf) > init_fill):
+            results = trainer.testing_loop(num_testing_games)
+            print(f" Epsilon: {agent.epsilon}, buffer size: {len(rpbuf.buf)}")
+            print(results[0])
+            print(results[1])
+            # Do stuff with the results here!

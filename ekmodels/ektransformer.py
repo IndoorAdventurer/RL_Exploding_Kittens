@@ -3,18 +3,26 @@ from torch import nn
 from .ekpreprocessnw import EKPreprocessNW
 
 
-class EKAtomicTF(nn.Module):
+class EKTransformer(nn.Module):
+    """
+    A transformer-based neural network architecture that hopefully is well
+    suited for solving the exploding kittens card game. The encoder takes the
+    knowledge of what cards are where as input, while the decoder takes the
+    action history as input.
+    """
 
     def __init__(self,
         cards_dim: int = 27,
-        history_len: int = 11
+        history_len: int = 11,
+        class_token: bool = False,
+        out_dim: int = 1
     ) -> None:
         super().__init__()
 
         d_model = 128
 
         self.cards_preproc = EKPreprocessNW(7, cards_dim, d_model, False)
-        self.history_preproc = EKPreprocessNW(history_len, 15, d_model, True)
+        self.history_preproc = EKPreprocessNW(history_len, 15, d_model, class_token)
         
         self.transformer = nn.Transformer(
             d_model=d_model,
@@ -25,12 +33,16 @@ class EKAtomicTF(nn.Module):
             batch_first=True
         )
 
-        self.fc = nn.Linear(d_model, 82)
+        self.fc = nn.Linear(d_model, out_dim)
 
     def forward(self, cards, history, card_mask, history_mask):
 
-        cards, card_mask = self.cards_preproc(cards, card_mask)
-        history, history_mask = self.history_preproc(history, history_mask)
+        cards = self.cards_preproc(cards)
+
+        if self.history_preproc.cls_token:
+            history, history_mask = self.history_preproc(history, history_mask)
+        else:
+            history = self.history_preproc(history)
 
         out = self.transformer(
             cards,
@@ -44,9 +56,9 @@ class EKAtomicTF(nn.Module):
 
 if __name__ == "__main__":
     
-    nw = EKAtomicTF(14)
+    nw = EKTransformer()
 
-    cards = torch.ones([3, 7, 14])
+    cards = torch.ones([3, 7, 27])
     cards_mask = torch.ones([3, 7])
     cards_mask[:, 6:] = 0
 
@@ -57,5 +69,3 @@ if __name__ == "__main__":
     out = nw(cards, history, cards_mask, history_mask)
 
     print(out.shape)
-
-    print(sum(p.numel() for p in nw.parameters()))

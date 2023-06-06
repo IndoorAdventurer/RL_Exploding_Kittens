@@ -78,7 +78,7 @@ class EKTrainer:
                     actions = self.game.get_legal_actions(True)
                 
                 if agents[idx].record and prev_cards[idx] is not None:
-                    if len(actions) == 0:
+                    if player_dead and agents[idx].long_form == True:
                         actions = np.zeros(82, dtype=np.int64)
                     
                     agents[idx].record_hook(
@@ -95,13 +95,6 @@ class EKTrainer:
                     agents[idx].train_hook()
 
                 if player_dead:
-                    
-                    # This inner if has to do with a bug I haven't found the
-                    # cause of yet. Need to fix it FIXME TODO
-                    if self.game.still_playing[idx]:
-                        print("TODO: fix bug")
-                        break
-                    
                     continue
                 
                 action = agents[idx].policy(True, cards, history, actions)
@@ -110,6 +103,27 @@ class EKTrainer:
                 prev_cards[idx] = cards
                 prev_history[idx] = history
                 prev_action[idx] = action
+            
+            # Make winner get terminal state still:
+            if np.sum(self.game.still_playing) == 1:
+                [idx, reward, cards, history, actions] = \
+                    self.game.update_and_get_state(False)
+                if agents[idx].include_probs:
+                    cards = append_probabilities(
+                        cards, self.game.cards.total_deck)
+                if agents[idx].long_form:
+                    actions = self.game.get_legal_actions(True)
+                if agents[idx].record and prev_cards[idx] is not None:
+                    print(f"Hiero! {actions.shape}")
+                    agents[idx].record_hook(
+                        prev_cards[idx],
+                        prev_history[idx],
+                        prev_action[idx],
+                        reward,
+                        cards,
+                        history,
+                        actions
+                    )
             
             if self.game_over_hook != None:
                 self.game_over_hook(True)
@@ -124,9 +138,6 @@ class EKTrainer:
         This function returns an `N × N` array, where `arr[x, y] = z` means that
         player `x` finished ahead of player `y`, `z` times.
         """
-
-        # TODO: same thing as in training loop with error because it fucks up
-        # the win_table
         
         # For testing we keep the same agents for all games:
         agents = self.get_test_agents_func()

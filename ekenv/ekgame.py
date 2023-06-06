@@ -210,6 +210,7 @@ class EKGame:
             # Signal that the game is over by giving no possible acitons:
             self.legal_actions = np.zeros([0, EKActionVecDefs.VEC_LEN])
             self.legal_actions_long = np.zeros([0], dtype=np.int64)
+            self.reward = self.reward_buffer[player]
             return player
 
         # There might still be an action that must be processed:
