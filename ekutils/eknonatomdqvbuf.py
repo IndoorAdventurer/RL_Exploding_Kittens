@@ -61,8 +61,8 @@ class EKNonAtomDQVBuf:
             torch.tensor(np.array([x[5] for x in sample]), dtype=torch.float32, device="cuda"),
             torch.tensor(np.array([x[6] for x in sample]), dtype=torch.float32, device="cuda"),
             torch.tensor(np.array([x[7] for x in sample]), dtype=torch.float32, device="cuda"),
-            torch.tensor(np.array([x[8] for x in sample]), dtype=torch.bool, device="cuda"),
-            torch.tensor(np.array([x[9] for x in sample]), dtype=torch.bool, device="cuda"),
+            torch.tensor(np.array([x[8] for x in sample]), dtype=torch.float32, device="cuda"),
+            torch.tensor(np.array([x[9] for x in sample]), dtype=torch.float32, device="cuda"),
             torch.tensor(np.array([x[10] for x in sample]), dtype=torch.bool, device="cuda"),
         )   # This just makes me want to cry... 😭
     

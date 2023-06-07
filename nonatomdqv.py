@@ -5,6 +5,7 @@ from ekutils import EKNonAtomDQVBuf
 import numpy as np
 import torch
 import random
+import argparse
 
 
 class NonAtomDQVAgent(EKAgent):
@@ -23,20 +24,29 @@ class NonAtomDQVAgent(EKAgent):
         
         # Hyperparameters:
         cards_dim = 14
-        hist_len = 11
+        hist_len = 10
         self.init_epsilon = 0.5
         self.end_epsilon = 0.1
-        self.epsilon_decay = 0.99
+        self.epsilon_decay = 0.999
         self.epsilon = self.init_epsilon
         self.batch_size = batch_size
         
         # Models:
-        self.q_net = EKTransformer(cards_dim, hist_len, False, 1).to("cuda")
+        self.q_net = EKTransformer(cards_dim, hist_len + 1, False, 1).to("cuda")
         self.v_net = EKTransformer(cards_dim, hist_len, False, 1).to("cuda")
         self.t_net = EKTransformer(cards_dim, hist_len, False, 1).to("cuda")
 
         # Other training stuff:
         self.rpbuf = EKNonAtomDQVBuf(rpbuf_len, 10)
+        self.q_loss_func = torch.nn.MSELoss()
+        self.v_loss_func = torch.nn.MSELoss()
+        self.q_optim = torch.optim.RMSprop(self.q_net.parameters(), lr=3e-4)
+        self.v_optim = torch.optim.RMSprop(self.v_net.parameters(), lr=3e-4)
+
+        # Recording and printing data:
+        self.loss_cnt = 0
+        self.q_loss = .0
+        self.v_loss = .0
     
     def policy(self,
             train: bool,
@@ -77,7 +87,7 @@ class NonAtomDQVAgent(EKAgent):
         return legal_actions[choice]
 
     def train_hook(self) -> None:
-        if len(self.rpbuf.buf) < 500:
+        if len(self.rpbuf.buf) < 10_000:
             return
 
         self.q_net.train()
@@ -105,15 +115,28 @@ class NonAtomDQVAgent(EKAgent):
         targets[is_terminal] = 0
         targets += reward
 
-        
-        # print(targets.shape)
-        if len(reward[is_terminal]) > 0: # and torch.any(reward > 0):
-            print(reward[is_terminal])
-            exit()
+        # update v_net:
+        v_preds = self.v_net(cards_t, history_t, c_t_mask, h_t_mask).squeeze(1)
+        v_loss = self.v_loss_func(v_preds, targets)
+        self.v_optim.zero_grad()
+        v_loss.backward()
+        self.v_optim.step()
 
-        # TODO update q_net
+        # update q_net:
+        action = action.unsqueeze(1)
+        history_t = torch.concatenate([action, history_t], 1)
+        h_t_mask = torch.concatenate([
+            torch.ones([len(h_t_mask), 1], dtype=torch.bool, device="cuda"),
+            h_t_mask], 1)
+        q_preds = self.q_net(cards_t, history_t, c_t_mask, h_t_mask).squeeze(1)
+        q_loss = self.q_loss_func(q_preds, targets)
+        self.q_optim.zero_grad()
+        q_loss.backward()
+        self.q_optim.step()
 
-        # TODO update v_net
+        self.loss_cnt += 1
+        self.q_loss += (q_loss.item() - self.q_loss) / self.loss_cnt
+        self.v_loss += (v_loss.item() - self.v_loss) / self.loss_cnt
 
     def record_hook(self,
             cards_t: np.ndarray,
@@ -145,13 +168,25 @@ class NonAtomDQVAgent(EKAgent):
     def update_epsilon(self):
         self.epsilon = self.end_epsilon + (self.epsilon - self.end_epsilon) * \
             self.epsilon_decay
+    
+    def get_losses(self):
+        l_q = self.q_loss
+        l_v = self.v_loss
+        self.loss_cnt = 0
+        self.q_loss = .0
+        self.v_loss = .0
+        return l_q, l_v
 
 if __name__ == "__main__":
     num_epochs = 100
     num_training_games = 30
     num_testing_games = 30
 
-    train_agent = NonAtomDQVAgent(True, True, 100_000, 32)
+    parser = argparse.ArgumentParser(description="Train Exploding kittens model with DQV and non-atomic action representations")
+    parser.add_argument("out_file", type=str)
+    args = parser.parse_args()
+
+    train_agent = NonAtomDQVAgent(True, True, 100_000, 64)
     rando = EKRandomAgent()
 
     def get_agents_for_training() -> list[EKAgent]:
@@ -166,14 +201,34 @@ if __name__ == "__main__":
         least 2 agents, and at most 5 agents. """
         return [train_agent, rando]
     
+    game_cnt = 0
     def end_of_game_hook(is_training: bool):
+        global game_cnt
         if is_training:
             print("|", end="", flush=True)
+            if len(train_agent.rpbuf.buf) >= 10_000:
+                game_cnt += 1
+                train_agent.update_epsilon()
+                if game_cnt % 10 == 0:
+                    print(f"epsilon: {train_agent.epsilon:.4}, buffer size: {len(train_agent.rpbuf.buf)}")
+                if game_cnt % 120 == 0:
+                    train_agent.update_target()
+                    print("Target updated!")
         else:
             print("x", end="", flush=True)
 
     trainer = EKTrainer(get_agents_for_training, get_agents_for_testing, end_of_game_hook)
 
+    # Filling up buffer first:
+    train_agent.epsilon = 1.0
+    while(len(train_agent.rpbuf.buf) < 10_000):
+        trainer.training_loop(1)
+    game_cnt = 0
+    train_agent.epsilon = train_agent.init_epsilon
+
+    out_file = open(args.out_file, "a")
+    out_file.write("games, wins, q_loss, v_loss\n")
+    
     for idx in range(num_epochs):
         
         print(f"---EPOCH-{idx}" + "-" * 20)
@@ -182,4 +237,10 @@ if __name__ == "__main__":
         results = trainer.testing_loop(num_testing_games)
         print(results[0])
         print(results[1])
-        # Do stuff with the results here!
+        l_q, l_v = train_agent.get_losses()
+        print(f"Q-Loss: {l_q} || V-Loss: {l_v}")
+        
+        out_file.write(f"{results[1][0, 1] + results[1][1, 0]}, {results[1][0, 1]}, {l_q}, {l_v}\n")
+        out_file.flush()
+    
+    out_file.close()

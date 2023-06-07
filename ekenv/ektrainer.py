@@ -114,7 +114,6 @@ class EKTrainer:
                 if agents[idx].long_form:
                     actions = self.game.get_legal_actions(True)
                 if agents[idx].record and prev_cards[idx] is not None:
-                    print(f"Hiero! {actions.shape}")
                     agents[idx].record_hook(
                         prev_cards[idx],
                         prev_history[idx],

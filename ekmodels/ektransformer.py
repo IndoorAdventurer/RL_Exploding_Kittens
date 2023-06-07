@@ -27,8 +27,8 @@ class EKTransformer(nn.Module):
         self.transformer = nn.Transformer(
             d_model=d_model,
             nhead=4,
-            num_encoder_layers=2,
-            num_decoder_layers=2,
+            num_encoder_layers=1,
+            num_decoder_layers=1,
             dim_feedforward=256,
             batch_first=True
         )

@@ -33,6 +33,7 @@ class MyLearningAgent(EKAgent):
                          long_form_actions, include_probs)
     
     def policy(self,
+            train: bool,
             cards: np.ndarray,
             action_history: np.ndarray,
             legal_actions: np.ndarray
@@ -48,7 +49,8 @@ class MyLearningAgent(EKAgent):
             action: int | np.ndarray,
             reward: float,
             cards_tp1: np.ndarray,
-            action_history_tp1: np.ndarray
+            action_history_tp1: np.ndarray,
+            legal_actions_tp1: np.ndarray
     ) -> None:
         pass
 
@@ -75,6 +77,5 @@ if __name__ == "__main__":
         
         trainer.training_loop(num_training_games)
         results = trainer.testing_loop(num_testing_games)
-        print(results)
         # Do stuff with the results here!
 ```
