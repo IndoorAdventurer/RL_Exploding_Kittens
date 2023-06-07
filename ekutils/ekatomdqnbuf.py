@@ -4,7 +4,7 @@ import random
 import torch
 
 
-class EKAtomicReplayBuffer:
+class EKAtomDQNBuf:
 
     def __init__(self, max_len: int, history_length: int) -> None:
         """
@@ -24,7 +24,7 @@ class EKAtomicReplayBuffer:
     def append(self,
             cards_t: np.ndarray,
             history_t: np.ndarray,
-            action: np.ndarray,
+            action: int,
             reward: float,
             cards_tp1: np.ndarray,
             history_tp1: np.ndarray,

@@ -3,7 +3,7 @@ import torch
 from random import shuffle, choice
 from ekenv import EKAgent, EKTrainer, EKRandomAgent
 from ekmodels import EKTransformer
-from ekutils import EKAtomicReplayBuffer
+from ekutils import EKAtomDQNBuf
 
 
 class AtomicTFDQN(EKAgent):
@@ -15,7 +15,7 @@ class AtomicTFDQN(EKAgent):
     def __init__(self,
         model: torch.nn.Module,
         optimizer,
-        buffer: EKAtomicReplayBuffer,
+        buffer: EKAtomDQNBuf,
         batch_size: int,
         epsilon: float,
         call_train_hook: bool,
@@ -154,7 +154,7 @@ if __name__ == "__main__":
 
     model = EKTransformer(14, 10, True, 82).to("cuda")
     optim = torch.optim.RMSprop(model.parameters(), lr=5e-4)
-    rpbuf = EKAtomicReplayBuffer(100_000, 10)
+    rpbuf = EKAtomDQNBuf(100_000, 10)
     agent = AtomicTFDQN(model, optim, rpbuf, 64, 0.5, True, True, False)
     rando = EKRandomAgent()
     init_fill = 10_000
