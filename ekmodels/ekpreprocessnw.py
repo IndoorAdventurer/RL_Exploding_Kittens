@@ -61,7 +61,7 @@ class EKPreprocessNW(nn.Module):
             embeddings = torch.concatenate([tok, embeddings], 1)
 
             if mask != None:
-                prepend = torch.ones([inp_shape[0], 1],
+                prepend = torch.zeros([inp_shape[0], 1],
                     dtype=torch.float32, device=mask.device)
                 mask = torch.concatenate([prepend, mask], 1)
 

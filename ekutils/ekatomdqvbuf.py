@@ -72,8 +72,8 @@ class EKAtomDQVBuf:
         """
 
         cur_len = len(to_pad)
-        mask = np.zeros(pad_len)
-        mask[:cur_len] = 1
+        mask = np.ones(pad_len) * -float("inf")
+        mask[:cur_len] = 0
 
         padded = np.pad(to_pad, ((0, pad_len - cur_len), (0, 0)))
 

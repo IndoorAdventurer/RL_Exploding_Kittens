@@ -8,6 +8,8 @@ import random
 import argparse
 
 
+# SINGLE AGENT: I.E. AGANST ONE RANDOM AGENT
+
 class NonAtomDQVAgent(EKAgent):
     """
     Implements the DQV algorithm for a non-atomic action space
@@ -33,15 +35,15 @@ class NonAtomDQVAgent(EKAgent):
         
         # Models:
         self.q_net = EKTransformer(cards_dim, hist_len + 1, False, 1).to("cuda")
-        self.v_net = EKTransformer(cards_dim, hist_len, False, 1).to("cuda")
-        self.t_net = EKTransformer(cards_dim, hist_len, False, 1).to("cuda")
+        self.v_net = EKTransformer(cards_dim, hist_len, True, 1).to("cuda")
+        self.t_net = EKTransformer(cards_dim, hist_len, True, 1).to("cuda")
 
         # Other training stuff:
         self.rpbuf = EKNonAtomDQVBuf(rpbuf_len, 10)
         self.q_loss_func = torch.nn.MSELoss()
         self.v_loss_func = torch.nn.MSELoss()
-        self.q_optim = torch.optim.RMSprop(self.q_net.parameters(), lr=3e-4)
-        self.v_optim = torch.optim.RMSprop(self.v_net.parameters(), lr=3e-4)
+        self.q_optim = torch.optim.RMSprop(self.q_net.parameters(), lr=1e-4)
+        self.v_optim = torch.optim.RMSprop(self.v_net.parameters(), lr=1e-4)
 
         # Recording and printing data:
         self.loss_cnt = 0
@@ -126,7 +128,7 @@ class NonAtomDQVAgent(EKAgent):
         action = action.unsqueeze(1)
         history_t = torch.concatenate([action, history_t], 1)
         h_t_mask = torch.concatenate([
-            torch.ones([len(h_t_mask), 1], dtype=torch.bool, device="cuda"),
+            torch.zeros([len(h_t_mask), 1], dtype=torch.bool, device="cuda"),
             h_t_mask], 1)
         q_preds = self.q_net(cards_t, history_t, c_t_mask, h_t_mask).squeeze(1)
         q_loss = self.q_loss_func(q_preds, targets)
@@ -211,7 +213,7 @@ if __name__ == "__main__":
                 train_agent.update_epsilon()
                 if game_cnt % 10 == 0:
                     print(f"epsilon: {train_agent.epsilon:.4}, buffer size: {len(train_agent.rpbuf.buf)}")
-                if game_cnt % 120 == 0:
+                if game_cnt % 90 == 0:
                     train_agent.update_target()
                     print("Target updated!")
         else:
