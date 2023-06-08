@@ -180,7 +180,7 @@ class NonAtomDQVAgent(EKAgent):
         return l_q, l_v
 
 if __name__ == "__main__":
-    num_epochs = 100
+    num_epochs = 300
     num_training_games = 30
     num_testing_games = 30
 
@@ -213,7 +213,7 @@ if __name__ == "__main__":
                 train_agent.update_epsilon()
                 if game_cnt % 10 == 0:
                     print(f"epsilon: {train_agent.epsilon:.4}, buffer size: {len(train_agent.rpbuf.buf)}")
-                if game_cnt % 90 == 0:
+                if game_cnt % 60 == 0:
                     train_agent.update_target()
                     print("Target updated!")
         else:

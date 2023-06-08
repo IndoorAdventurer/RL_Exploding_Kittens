@@ -274,7 +274,7 @@ if __name__ == "__main__":
         l_q, l_v = train_agent.get_losses()
         print(f"Q-Loss: {l_q} || V-Loss: {l_v}")
         
-        out_file.write(f"{results[0][0], results[0][2], results[1][1], results[1][2], {l_q}, {l_v}}\n")
+        out_file.write(f"{results[0][0]}, {results[0][2]}, {results[1][0, 1]}, {results[1][0, 2]}, {l_q}, {l_v}\n")
         out_file.flush()
 
         if idx % 10 == 0:

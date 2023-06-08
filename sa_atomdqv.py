@@ -35,8 +35,8 @@ class AtomDQVAgent(EKAgent):
         
         # Models:
         self.q_net = EKTransformer(cards_dim, hist_len + 1, True, 82).to("cuda")
-        self.v_net = EKTransformer(cards_dim, hist_len, False, 1).to("cuda")
-        self.t_net = EKTransformer(cards_dim, hist_len, False, 1).to("cuda")
+        self.v_net = EKTransformer(cards_dim, hist_len, True, 1).to("cuda")
+        self.t_net = EKTransformer(cards_dim, hist_len, True, 1).to("cuda")
 
         # Other training stuff:
         self.rpbuf = EKAtomDQVBuf(rpbuf_len, 10)
@@ -126,15 +126,7 @@ class AtomDQVAgent(EKAgent):
 
         # update q_net:
         q_preds = self.q_net(cards_t, history_t, c_t_mask, h_t_mask)
-
         q_preds = torch.gather(q_preds, 1, action.unsqueeze(0)).squeeze()
-
-        # action = action.unsqueeze(1)
-        # history_t = torch.concatenate([action, history_t], 1)
-        # h_t_mask = torch.concatenate([
-        #     torch.ones([len(h_t_mask), 1], dtype=torch.bool, device="cuda"),
-        #     h_t_mask], 1)
-        # q_preds = self.q_net(cards_t, history_t, c_t_mask, h_t_mask).squeeze(1)
         q_loss = self.q_loss_func(q_preds, targets)
         self.q_optim.zero_grad()
         q_loss.backward()
@@ -182,7 +174,7 @@ class AtomDQVAgent(EKAgent):
         return l_q, l_v
 
 if __name__ == "__main__":
-    num_epochs = 100
+    num_epochs = 300
     num_training_games = 30
     num_testing_games = 30
 
@@ -215,7 +207,7 @@ if __name__ == "__main__":
                 train_agent.update_epsilon()
                 if game_cnt % 10 == 0:
                     print(f"epsilon: {train_agent.epsilon:.4}, buffer size: {len(train_agent.rpbuf.buf)}")
-                if game_cnt % 90 == 0:
+                if game_cnt % 60 == 0:
                     train_agent.update_target()
                     print("Target updated!")
         else:
