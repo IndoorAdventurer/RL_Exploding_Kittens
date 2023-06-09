@@ -5,7 +5,6 @@ from ekutils import EKNonAtomDQVBuf
 import numpy as np
 import torch
 import random
-import argparse
 
 
 # SINGLE AGENT: I.E. AGANST ONE RANDOM AGENT
@@ -180,13 +179,10 @@ class NonAtomDQVAgent(EKAgent):
         return l_q, l_v
 
 def main(id: str):
-    num_epochs = 300
+    num_epochs = 175
     num_training_games = 30
     num_testing_games = 30
 
-    # parser = argparse.ArgumentParser(description="Train Exploding kittens model with DQV and non-atomic action representations")
-    # parser.add_argument("out_file", type=str)
-    # args = parser.parse_args()
     console_file = open(id + ".out", "a")
 
     train_agent = NonAtomDQVAgent(True, True, 100_000, 64)

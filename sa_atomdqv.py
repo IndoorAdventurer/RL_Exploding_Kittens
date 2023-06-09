@@ -5,7 +5,6 @@ from ekutils import EKAtomDQVBuf
 import numpy as np
 import torch
 import random
-import argparse
 
 
 # SINGLE AGENT: I.E. AGANST ONE RANDOM AGENT
@@ -173,14 +172,12 @@ class AtomDQVAgent(EKAgent):
         self.v_loss = .0
         return l_q, l_v
 
-if __name__ == "__main__":
-    num_epochs = 300
+def main(id: str):
+    num_epochs = 175
     num_training_games = 30
     num_testing_games = 30
 
-    parser = argparse.ArgumentParser(description="Train Exploding kittens model with DQV and non-atomic action representations")
-    parser.add_argument("out_file", type=str)
-    args = parser.parse_args()
+    console_file = open(id + ".out", "a")
 
     train_agent = AtomDQVAgent(True, True, 100_000, 64)
     rando = EKRandomAgent()
@@ -199,19 +196,19 @@ if __name__ == "__main__":
     
     game_cnt = 0
     def end_of_game_hook(is_training: bool):
-        global game_cnt
+        nonlocal game_cnt
         if is_training:
-            print("|", end="", flush=True)
+            print("|", end="", flush=True, file=console_file)
             if len(train_agent.rpbuf.buf) >= 10_000:
                 game_cnt += 1
                 train_agent.update_epsilon()
                 if game_cnt % 10 == 0:
-                    print(f"epsilon: {train_agent.epsilon:.4}, buffer size: {len(train_agent.rpbuf.buf)}")
+                    print(f"epsilon: {train_agent.epsilon:.4}, buffer size: {len(train_agent.rpbuf.buf)}", file=console_file)
                 if game_cnt % 60 == 0:
                     train_agent.update_target()
-                    print("Target updated!")
+                    print("Target updated!", file=console_file)
         else:
-            print("x", end="", flush=True)
+            print("x", end="", flush=True, file=console_file)
 
     trainer = EKTrainer(get_agents_for_training, get_agents_for_testing, end_of_game_hook)
 
@@ -222,21 +219,29 @@ if __name__ == "__main__":
     game_cnt = 0
     train_agent.epsilon = train_agent.init_epsilon
 
-    out_file = open(args.out_file, "a")
+    out_file = open(id + ".csv", "a")
     out_file.write("games, wins, q_loss, v_loss\n")
     
     for idx in range(num_epochs):
         
-        print(f"---EPOCH-{idx}" + "-" * 20)
+        print(f"---EPOCH-{idx}" + "-" * 20, file=console_file)
         
         trainer.training_loop(num_training_games)
         results = trainer.testing_loop(num_testing_games)
-        print(results[0])
-        print(results[1])
+        print(results[0], file=console_file)
+        print(results[1], file=console_file)
         l_q, l_v = train_agent.get_losses()
-        print(f"Q-Loss: {l_q} || V-Loss: {l_v}")
+        print(f"Q-Loss: {l_q} || V-Loss: {l_v}", file=console_file)
         
         out_file.write(f"{results[1][0, 1] + results[1][1, 0]}, {results[1][0, 1]}, {l_q}, {l_v}\n")
         out_file.flush()
     
     out_file.close()
+
+
+from multiprocessing import Pool
+
+if __name__ == "__main__":
+
+    with Pool(8) as p:
+        p.map(main, [f"sa_atom_{idx}" for idx in range(8)])

@@ -12,19 +12,6 @@ module load Python/3.10.8-GCCcore-12.2.0
 
 source $HOME/.envs/ek_drl_env/bin/activate
 
-
-N=5
-pids=()
-
-# Run scripts in parallel:
-for ((i=1; i<=N; i++)); do
-    python $1 $2_$i > $2_$i.out &
-    pids+=($!)
-done
-
-# Wait for them to finish:
-for pid in "${pids[@]}"; do
-    wait "$pid"
-done
+python $1
 
 deactivate
