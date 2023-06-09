@@ -616,7 +616,7 @@ class EKGame:
         idx = self.nope_player
         while True:
             idx += 1
-            if idx == self.num_players:
+            if idx >= self.num_players:
                 return -1
             if self.still_playing[idx] and \
                 self.cards.cards[EKCards.FIRST_PLAYER_IDX + idx, EKCardTypes.NOPE] > 0:

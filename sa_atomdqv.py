@@ -217,7 +217,7 @@ if __name__ == "__main__":
 
     # Filling up buffer first:
     train_agent.epsilon = 1.0
-    while(len(train_agent.rpbuf.buf) < 10_000):
+    while len(train_agent.rpbuf.buf) < 10_000:
         trainer.training_loop(1)
     game_cnt = 0
     train_agent.epsilon = train_agent.init_epsilon
