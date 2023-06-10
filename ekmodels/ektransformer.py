@@ -15,21 +15,41 @@ class EKTransformer(nn.Module):
         cards_dim: int = 27,
         history_len: int = 11,
         class_token: bool = False,
-        out_dim: int = 1
+        out_dim: int = 1,
+        nhead: int = 4,
+        d_model: int = 128,
+        dim_feedforward: int = 256
     ) -> None:
-        super().__init__()
+        """
+        Constructor
 
-        d_model = 128
+        Args:
+            cards_dim (int): size of input card embeddings. Is 14 for the
+            vanllia representation, but 27 if you include probability
+            calculations.
+            history_len (int): the maximum number of embeddings to include in
+            the history, which will be the input of the decoder. (Note that this
+            excludes optional class tokens, which get prepended to this).
+            class_token (bool): if `True`, a learned class token will be
+            prepended to the input of the decoder.
+            out_dim (int): the dimensionality of the final output of the model.
+            nhead (int): number of attention heads for both the encoder and
+            decoder blocks of the transformer.
+            d_model (int): size of the embeddings for both encoder and decoder
+            dim_feedforward (int): number of hidden layers for the feedforward
+            layers inside the encoder and decoder blocks.
+        """
+        super().__init__()
 
         self.cards_preproc = EKPreprocessNW(7, cards_dim, d_model, False)
         self.history_preproc = EKPreprocessNW(history_len, 15, d_model, class_token)
         
         self.transformer = nn.Transformer(
             d_model=d_model,
-            nhead=4,
+            nhead=nhead,
             num_encoder_layers=1,
             num_decoder_layers=1,
-            dim_feedforward=256,
+            dim_feedforward=dim_feedforward,
             batch_first=True
         )
 

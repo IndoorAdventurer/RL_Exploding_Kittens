@@ -9,6 +9,7 @@ import os
 
 
 # MULTI AGENT
+# Uses a bigger model than default and includes probabilities!
 
 class NonAtomDQVAgent(EKAgent):
     """
@@ -22,10 +23,10 @@ class NonAtomDQVAgent(EKAgent):
         batch_size: int
     ) -> None:
         super().__init__(call_train_hook, call_record_hook,
-                         False, False)
+                         False, True)
         
         # Hyperparameters:
-        cards_dim = 14
+        cards_dim = 27
         hist_len = 10
         self.init_epsilon = 0.5
         self.end_epsilon = 0.05
@@ -34,9 +35,9 @@ class NonAtomDQVAgent(EKAgent):
         self.batch_size = batch_size
         
         # Models:
-        self.q_net = EKTransformer(cards_dim, hist_len + 1, False, 1).to("cuda")
-        self.v_net = EKTransformer(cards_dim, hist_len, True, 1).to("cuda")
-        self.t_net = EKTransformer(cards_dim, hist_len, True, 1).to("cuda")
+        self.q_net = EKTransformer(cards_dim, hist_len + 1, False, 1, 8, 256, 512).to("cuda")
+        self.v_net = EKTransformer(cards_dim, hist_len, True, 1, 8, 256, 512).to("cuda")
+        self.t_net = EKTransformer(cards_dim, hist_len, True, 1, 8, 256, 512).to("cuda")
 
         # Other training stuff:
         self.rpbuf = EKNonAtomDQVBuf(rpbuf_len, 10)
@@ -201,8 +202,8 @@ def main(id: str):
         num_players = random.randint(1, 4)
         for _ in range(num_players):
             rnd = random.random()
-            q_dir = "./q_nonatom/"
-            eps_dir = "./eps_nonatom/"
+            q_dir = "./q_nonatombp/"
+            eps_dir = "./eps_nonatombp/"
             paths = [x for x in os.listdir(q_dir) if x.endswith(".pth")]
             
             # Adding random agent:
@@ -275,9 +276,9 @@ def main(id: str):
         out_file.flush()
 
         if idx % 10 == 0:
-            torch.save(train_agent.q_net.state_dict(), f"./q_nonatom/{id}_ep{idx}.pth")
-            torch.save(train_agent.v_net.state_dict(), f"./v_nonatom/{id}_ep{idx}.pth")
-            with open(f"./eps_nonatom/{id}_ep{idx}.txt", "w") as ef:
+            torch.save(train_agent.q_net.state_dict(), f"./q_nonatombp/{id}_ep{idx}.pth")
+            torch.save(train_agent.v_net.state_dict(), f"./v_nonatombp/{id}_ep{idx}.pth")
+            with open(f"./eps_nonatombp/{id}_ep{idx}.txt", "w") as ef:
                 ef.write(str(train_agent.epsilon))
 
         if results[0][0] > max_reward or results[0][0] > results[0][1] + 5:
@@ -295,4 +296,4 @@ from multiprocessing import Pool
 if __name__ == "__main__":
 
     with Pool(5) as p:
-        p.map(main, [f"ma_nonatom_{idx}" for idx in range(5)])
+        p.map(main, [f"ma_nonatom_big_withprobs{idx}" for idx in range(5)])

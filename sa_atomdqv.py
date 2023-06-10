@@ -236,6 +236,7 @@ def main(id: str):
         out_file.write(f"{results[1][0, 1] + results[1][1, 0]}, {results[1][0, 1]}, {l_q}, {l_v}\n")
         out_file.flush()
     
+    console_file.close()
     out_file.close()
 
 
