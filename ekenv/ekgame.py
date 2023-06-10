@@ -494,13 +494,6 @@ class EKGame:
         """
         action = action.copy()
 
-        # Masking everything other players did that you do not know:
-        other_mask = action[:, EKActionVecDefs.PLAYER] != player
-        defuse_mask = action[:, EKActionVecDefs.DEFUSE_KITTEN] == 1
-        favor_mask = action[:, EKActionVecDefs.PLAY_FAVOR] == 1
-        action[other_mask & defuse_mask, EKActionVecDefs.POINTER] = 0
-        action[other_mask & favor_mask, EKActionVecDefs.TARGET_CARD] = 0
-
         action[EKActionVecDefs.PLAYER] = player
         if action[EKActionVecDefs.PLAY_FAVOR] == 1 or \
                 action[EKActionVecDefs.PLAY_TWO_CATS] == 1 or \
@@ -521,6 +514,8 @@ class EKGame:
         (self.action_history[:, EKActionVecDefs.PLAYER] == player)
 
         history = self.action_history[future_mask].copy()
+
+        # Converting player index to player-centric from
         history[:, EKActionVecDefs.PLAYER] = \
             np.mod(history[:, EKActionVecDefs.PLAYER] - player + 1, self.num_players)
         
@@ -531,6 +526,14 @@ class EKGame:
         history[haspointer_mask, EKActionVecDefs.POINTER] = \
             np.mod(history[haspointer_mask, EKActionVecDefs.POINTER] -
                    player + 1, self.num_players)
+
+        # Mask everything you should not be allowed to know:
+        other_mask = history[:, EKActionVecDefs.PLAYER] != 1
+        defuse_mask = history[:, EKActionVecDefs.DEFUSE_KITTEN] == 1
+        favor_mask = history[:, EKActionVecDefs.PLAY_FAVOR] == 1
+        history[other_mask & defuse_mask, EKActionVecDefs.POINTER] = 0
+        history[other_mask & favor_mask, EKActionVecDefs.TARGET_CARD] = 0
+
         return history
 
     def push_action(self, action: np.ndarray):
