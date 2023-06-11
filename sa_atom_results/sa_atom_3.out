@@ -1,0 +1,1354 @@
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||---EPOCH-0--------------------
+||||||||||epsilon: 0.496, buffer size: 10299
+||||||||||epsilon: 0.4921, buffer size: 10622
+||||||||||epsilon: 0.4882, buffer size: 10918
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-24.  -6.]
+[[ 0  6]
+ [24  0]]
+Q-Loss: 0.039971467894807065 || V-Loss: 0.024409274538632824
+---EPOCH-1--------------------
+||||||||||epsilon: 0.4843, buffer size: 11199
+||||||||||epsilon: 0.4805, buffer size: 11470
+||||||||||epsilon: 0.4767, buffer size: 11756
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-14. -16.]
+[[ 0 16]
+ [14  0]]
+Q-Loss: 0.025369989002998236 || V-Loss: 0.01409300885279662
+---EPOCH-2--------------------
+||||||||||epsilon: 0.4729, buffer size: 12040
+||||||||||epsilon: 0.4692, buffer size: 12327
+||||||||||epsilon: 0.4656, buffer size: 12674
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.0202729099313479 || V-Loss: 0.013125532443524978
+---EPOCH-3--------------------
+||||||||||epsilon: 0.4619, buffer size: 12999
+||||||||||epsilon: 0.4583, buffer size: 13288
+||||||||||epsilon: 0.4547, buffer size: 13617
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-16. -14.]
+[[ 0 14]
+ [16  0]]
+Q-Loss: 0.0176404001427272 || V-Loss: 0.01261847067125374
+---EPOCH-4--------------------
+||||||||||epsilon: 0.4512, buffer size: 13946
+||||||||||epsilon: 0.4477, buffer size: 14225
+||||||||||epsilon: 0.4443, buffer size: 14542
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.0159668487794796 || V-Loss: 0.012246590523109599
+---EPOCH-5--------------------
+||||||||||epsilon: 0.4408, buffer size: 14798
+||||||||||epsilon: 0.4374, buffer size: 15102
+||||||||||epsilon: 0.4341, buffer size: 15477
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-15. -15.]
+[[ 0 15]
+ [15  0]]
+Q-Loss: 0.015075512453525645 || V-Loss: 0.01223809561079831
+---EPOCH-6--------------------
+||||||||||epsilon: 0.4308, buffer size: 15755
+||||||||||epsilon: 0.4275, buffer size: 16051
+||||||||||epsilon: 0.4242, buffer size: 16374
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-15. -15.]
+[[ 0 15]
+ [15  0]]
+Q-Loss: 0.014218018012269783 || V-Loss: 0.012282035213256
+---EPOCH-7--------------------
+||||||||||epsilon: 0.421, buffer size: 16702
+||||||||||epsilon: 0.4178, buffer size: 16999
+||||||||||epsilon: 0.4146, buffer size: 17298
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-14. -16.]
+[[ 0 16]
+ [14  0]]
+Q-Loss: 0.013274948147157755 || V-Loss: 0.011238619692046498
+---EPOCH-8--------------------
+||||||||||epsilon: 0.4115, buffer size: 17632
+||||||||||epsilon: 0.4084, buffer size: 17891
+||||||||||epsilon: 0.4053, buffer size: 18167
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-13. -17.]
+[[ 0 17]
+ [13  0]]
+Q-Loss: 0.013621949698492905 || V-Loss: 0.010586415339143538
+---EPOCH-9--------------------
+||||||||||epsilon: 0.4023, buffer size: 18441
+||||||||||epsilon: 0.3993, buffer size: 18733
+||||||||||epsilon: 0.3963, buffer size: 19027
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-14. -16.]
+[[ 0 16]
+ [14  0]]
+Q-Loss: 0.01354807874563978 || V-Loss: 0.010388965334204348
+---EPOCH-10--------------------
+||||||||||epsilon: 0.3933, buffer size: 19341
+||||||||||epsilon: 0.3904, buffer size: 19649
+||||||||||epsilon: 0.3875, buffer size: 19932
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-12. -18.]
+[[ 0 18]
+ [12  0]]
+Q-Loss: 0.014672123395454772 || V-Loss: 0.010106666294027627
+---EPOCH-11--------------------
+||||||||||epsilon: 0.3847, buffer size: 20233
+||||||||||epsilon: 0.3818, buffer size: 20479
+||||||||||epsilon: 0.379, buffer size: 20753
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-20. -10.]
+[[ 0 10]
+ [20  0]]
+Q-Loss: 0.014607458251572043 || V-Loss: 0.009975275203761983
+---EPOCH-12--------------------
+||||||||||epsilon: 0.3762, buffer size: 21098
+||||||||||epsilon: 0.3735, buffer size: 21355
+||||||||||epsilon: 0.3708, buffer size: 21720
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-15. -15.]
+[[ 0 15]
+ [15  0]]
+Q-Loss: 0.017285453004438837 || V-Loss: 0.010180852288583519
+---EPOCH-13--------------------
+||||||||||epsilon: 0.3681, buffer size: 22056
+||||||||||epsilon: 0.3654, buffer size: 22296
+||||||||||epsilon: 0.3628, buffer size: 22614
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.01684786080086763 || V-Loss: 0.009470177517234623
+---EPOCH-14--------------------
+||||||||||epsilon: 0.3601, buffer size: 22917
+||||||||||epsilon: 0.3576, buffer size: 23202
+||||||||||epsilon: 0.355, buffer size: 23510
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-14. -16.]
+[[ 0 16]
+ [14  0]]
+Q-Loss: 0.02035291813607954 || V-Loss: 0.009790371253209668
+---EPOCH-15--------------------
+||||||||||epsilon: 0.3525, buffer size: 23785
+||||||||||epsilon: 0.3499, buffer size: 24118
+||||||||||epsilon: 0.3475, buffer size: 24447
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-14. -16.]
+[[ 0 16]
+ [14  0]]
+Q-Loss: 0.019674236618706188 || V-Loss: 0.009171506802254191
+---EPOCH-16--------------------
+||||||||||epsilon: 0.345, buffer size: 24723
+||||||||||epsilon: 0.3426, buffer size: 25109
+||||||||||epsilon: 0.3401, buffer size: 25414
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.020681286939899297 || V-Loss: 0.009366477213424861
+---EPOCH-17--------------------
+||||||||||epsilon: 0.3377, buffer size: 25800
+||||||||||epsilon: 0.3354, buffer size: 26134
+||||||||||epsilon: 0.333, buffer size: 26426
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.020898848743483505 || V-Loss: 0.009327934802343908
+---EPOCH-18--------------------
+||||||||||epsilon: 0.3307, buffer size: 26779
+||||||||||epsilon: 0.3284, buffer size: 27088
+||||||||||epsilon: 0.3261, buffer size: 27466
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-14. -16.]
+[[ 0 16]
+ [14  0]]
+Q-Loss: 0.022496501028056573 || V-Loss: 0.009095101154489839
+---EPOCH-19--------------------
+||||||||||epsilon: 0.3239, buffer size: 27736
+||||||||||epsilon: 0.3217, buffer size: 28040
+||||||||||epsilon: 0.3195, buffer size: 28324
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.022573631937606982 || V-Loss: 0.009246285701203278
+---EPOCH-20--------------------
+||||||||||epsilon: 0.3173, buffer size: 28606
+||||||||||epsilon: 0.3151, buffer size: 28939
+||||||||||epsilon: 0.313, buffer size: 29274
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.025842304836806974 || V-Loss: 0.00987489941661899
+---EPOCH-21--------------------
+||||||||||epsilon: 0.3108, buffer size: 29613
+||||||||||epsilon: 0.3088, buffer size: 29921
+||||||||||epsilon: 0.3067, buffer size: 30219
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.025494499330138896 || V-Loss: 0.00975009889011478
+---EPOCH-22--------------------
+||||||||||epsilon: 0.3046, buffer size: 30539
+||||||||||epsilon: 0.3026, buffer size: 30921
+||||||||||epsilon: 0.3006, buffer size: 31228
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.02772343157034414 || V-Loss: 0.00959073118094707
+---EPOCH-23--------------------
+||||||||||epsilon: 0.2986, buffer size: 31511
+||||||||||epsilon: 0.2966, buffer size: 31813
+||||||||||epsilon: 0.2946, buffer size: 32095
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.027696308159527443 || V-Loss: 0.009678104921709202
+---EPOCH-24--------------------
+||||||||||epsilon: 0.2927, buffer size: 32400
+||||||||||epsilon: 0.2908, buffer size: 32670
+||||||||||epsilon: 0.2889, buffer size: 33006
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-16. -14.]
+[[ 0 14]
+ [16  0]]
+Q-Loss: 0.031353087155856996 || V-Loss: 0.010322433849796675
+---EPOCH-25--------------------
+||||||||||epsilon: 0.287, buffer size: 33230
+||||||||||epsilon: 0.2851, buffer size: 33564
+||||||||||epsilon: 0.2833, buffer size: 33885
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.031079359086795474 || V-Loss: 0.010044474236463109
+---EPOCH-26--------------------
+||||||||||epsilon: 0.2815, buffer size: 34146
+||||||||||epsilon: 0.2797, buffer size: 34454
+||||||||||epsilon: 0.2779, buffer size: 34736
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.03607471071780769 || V-Loss: 0.010251248468597316
+---EPOCH-27--------------------
+||||||||||epsilon: 0.2761, buffer size: 35047
+||||||||||epsilon: 0.2743, buffer size: 35346
+||||||||||epsilon: 0.2726, buffer size: 35671
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.03577485054853964 || V-Loss: 0.009982452335354197
+---EPOCH-28--------------------
+||||||||||epsilon: 0.2709, buffer size: 35945
+||||||||||epsilon: 0.2692, buffer size: 36291
+||||||||||epsilon: 0.2675, buffer size: 36634
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.03786572496648189 || V-Loss: 0.010047444080360969
+---EPOCH-29--------------------
+||||||||||epsilon: 0.2658, buffer size: 36950
+||||||||||epsilon: 0.2642, buffer size: 37283
+||||||||||epsilon: 0.2626, buffer size: 37568
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-14. -16.]
+[[ 0 16]
+ [14  0]]
+Q-Loss: 0.037055389262585614 || V-Loss: 0.009724230454115489
+---EPOCH-30--------------------
+||||||||||epsilon: 0.2609, buffer size: 37856
+||||||||||epsilon: 0.2593, buffer size: 38228
+||||||||||epsilon: 0.2577, buffer size: 38619
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.03351080316805365 || V-Loss: 0.009575615654985874
+---EPOCH-31--------------------
+||||||||||epsilon: 0.2562, buffer size: 38906
+||||||||||epsilon: 0.2546, buffer size: 39237
+||||||||||epsilon: 0.2531, buffer size: 39455
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.03379390738718877 || V-Loss: 0.010007369605170329
+---EPOCH-32--------------------
+||||||||||epsilon: 0.2516, buffer size: 39727
+||||||||||epsilon: 0.2501, buffer size: 39993
+||||||||||epsilon: 0.2486, buffer size: 40294
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.03976197781168664 || V-Loss: 0.010404929724073848
+---EPOCH-33--------------------
+||||||||||epsilon: 0.2471, buffer size: 40542
+||||||||||epsilon: 0.2456, buffer size: 40876
+||||||||||epsilon: 0.2442, buffer size: 41161
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.03954034986683606 || V-Loss: 0.010187705198688422
+---EPOCH-34--------------------
+||||||||||epsilon: 0.2427, buffer size: 41509
+||||||||||epsilon: 0.2413, buffer size: 41790
+||||||||||epsilon: 0.2399, buffer size: 42093
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.04572556666792072 || V-Loss: 0.01077590504849449
+---EPOCH-35--------------------
+||||||||||epsilon: 0.2385, buffer size: 42403
+||||||||||epsilon: 0.2371, buffer size: 42753
+||||||||||epsilon: 0.2358, buffer size: 43052
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.0457485863113219 || V-Loss: 0.010952686896240443
+---EPOCH-36--------------------
+||||||||||epsilon: 0.2344, buffer size: 43280
+||||||||||epsilon: 0.2331, buffer size: 43586
+||||||||||epsilon: 0.2318, buffer size: 43906
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.04819473078632326 || V-Loss: 0.010899515489103352
+---EPOCH-37--------------------
+||||||||||epsilon: 0.2304, buffer size: 44257
+||||||||||epsilon: 0.2291, buffer size: 44639
+||||||||||epsilon: 0.2279, buffer size: 44985
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.048110968490830706 || V-Loss: 0.011056276176592616
+---EPOCH-38--------------------
+||||||||||epsilon: 0.2266, buffer size: 45317
+||||||||||epsilon: 0.2253, buffer size: 45670
+||||||||||epsilon: 0.2241, buffer size: 45927
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.053114976601155765 || V-Loss: 0.011225887846867452
+---EPOCH-39--------------------
+||||||||||epsilon: 0.2228, buffer size: 46194
+||||||||||epsilon: 0.2216, buffer size: 46473
+||||||||||epsilon: 0.2204, buffer size: 46781
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.053126647324663476 || V-Loss: 0.01106350450330256
+---EPOCH-40--------------------
+||||||||||epsilon: 0.2192, buffer size: 47067
+||||||||||epsilon: 0.218, buffer size: 47449
+||||||||||epsilon: 0.2168, buffer size: 47766
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.05445726639184812 || V-Loss: 0.011622497247702021
+---EPOCH-41--------------------
+||||||||||epsilon: 0.2157, buffer size: 48161
+||||||||||epsilon: 0.2145, buffer size: 48465
+||||||||||epsilon: 0.2134, buffer size: 48776
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.05460558675706682 || V-Loss: 0.011751784906456522
+---EPOCH-42--------------------
+||||||||||epsilon: 0.2123, buffer size: 49126
+||||||||||epsilon: 0.2111, buffer size: 49462
+||||||||||epsilon: 0.21, buffer size: 49796
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.06502325899949786 || V-Loss: 0.012408477549387648
+---EPOCH-43--------------------
+||||||||||epsilon: 0.2089, buffer size: 50138
+||||||||||epsilon: 0.2079, buffer size: 50456
+||||||||||epsilon: 0.2068, buffer size: 50762
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.06399716268765906 || V-Loss: 0.012427176722732728
+---EPOCH-44--------------------
+||||||||||epsilon: 0.2057, buffer size: 51140
+||||||||||epsilon: 0.2047, buffer size: 51487
+||||||||||epsilon: 0.2036, buffer size: 51786
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.06457140042454668 || V-Loss: 0.011696644754298697
+---EPOCH-45--------------------
+||||||||||epsilon: 0.2026, buffer size: 52085
+||||||||||epsilon: 0.2016, buffer size: 52422
+||||||||||epsilon: 0.2006, buffer size: 52744
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.06471396671843335 || V-Loss: 0.011711564929008579
+---EPOCH-46--------------------
+||||||||||epsilon: 0.1996, buffer size: 53042
+||||||||||epsilon: 0.1986, buffer size: 53361
+||||||||||epsilon: 0.1976, buffer size: 53725
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.062363733530929936 || V-Loss: 0.012590849780536666
+---EPOCH-47--------------------
+||||||||||epsilon: 0.1966, buffer size: 54062
+||||||||||epsilon: 0.1957, buffer size: 54304
+||||||||||epsilon: 0.1947, buffer size: 54593
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.06263792090602738 || V-Loss: 0.012385184790505342
+---EPOCH-48--------------------
+||||||||||epsilon: 0.1938, buffer size: 54940
+||||||||||epsilon: 0.1928, buffer size: 55288
+||||||||||epsilon: 0.1919, buffer size: 55601
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.06540375320641303 || V-Loss: 0.012821818178398373
+---EPOCH-49--------------------
+||||||||||epsilon: 0.191, buffer size: 55899
+||||||||||epsilon: 0.1901, buffer size: 56156
+||||||||||epsilon: 0.1892, buffer size: 56452
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.06587368069902391 || V-Loss: 0.012670018903004673
+---EPOCH-50--------------------
+||||||||||epsilon: 0.1883, buffer size: 56818
+||||||||||epsilon: 0.1874, buffer size: 57155
+||||||||||epsilon: 0.1865, buffer size: 57434
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.06203677193746653 || V-Loss: 0.012075057572471412
+---EPOCH-51--------------------
+||||||||||epsilon: 0.1857, buffer size: 57838
+||||||||||epsilon: 0.1848, buffer size: 58146
+||||||||||epsilon: 0.184, buffer size: 58512
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.06178713355006441 || V-Loss: 0.012030938828657203
+---EPOCH-52--------------------
+||||||||||epsilon: 0.1832, buffer size: 58808
+||||||||||epsilon: 0.1823, buffer size: 59083
+||||||||||epsilon: 0.1815, buffer size: 59332
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.060627836317382486 || V-Loss: 0.011519129018376996
+---EPOCH-53--------------------
+||||||||||epsilon: 0.1807, buffer size: 59692
+||||||||||epsilon: 0.1799, buffer size: 59957
+||||||||||epsilon: 0.1791, buffer size: 60211
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -2. -28.]
+[[ 0 28]
+ [ 2  0]]
+Q-Loss: 0.06058967638479414 || V-Loss: 0.012083462699344794
+---EPOCH-54--------------------
+||||||||||epsilon: 0.1783, buffer size: 60520
+||||||||||epsilon: 0.1775, buffer size: 60778
+||||||||||epsilon: 0.1768, buffer size: 61084
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.0648886870175161 || V-Loss: 0.012302866241697432
+---EPOCH-55--------------------
+||||||||||epsilon: 0.176, buffer size: 61388
+||||||||||epsilon: 0.1752, buffer size: 61678
+||||||||||epsilon: 0.1745, buffer size: 62060
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.06467358662089724 || V-Loss: 0.012399695755270926
+---EPOCH-56--------------------
+||||||||||epsilon: 0.1737, buffer size: 62348
+||||||||||epsilon: 0.173, buffer size: 62741
+||||||||||epsilon: 0.1723, buffer size: 63061
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.07325745376917964 || V-Loss: 0.013061123799968303
+---EPOCH-57--------------------
+||||||||||epsilon: 0.1716, buffer size: 63404
+||||||||||epsilon: 0.1709, buffer size: 63659
+||||||||||epsilon: 0.1701, buffer size: 64041
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.07340882261196978 || V-Loss: 0.012771977106748359
+---EPOCH-58--------------------
+||||||||||epsilon: 0.1694, buffer size: 64343
+||||||||||epsilon: 0.1688, buffer size: 64584
+||||||||||epsilon: 0.1681, buffer size: 64852
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.0710626791315586 || V-Loss: 0.012423991272624472
+---EPOCH-59--------------------
+||||||||||epsilon: 0.1674, buffer size: 65124
+||||||||||epsilon: 0.1667, buffer size: 65444
+||||||||||epsilon: 0.1661, buffer size: 65763
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.07126411517942174 || V-Loss: 0.012233536086988692
+---EPOCH-60--------------------
+||||||||||epsilon: 0.1654, buffer size: 66043
+||||||||||epsilon: 0.1648, buffer size: 66369
+||||||||||epsilon: 0.1641, buffer size: 66668
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.07240923310286915 || V-Loss: 0.012220837099001788
+---EPOCH-61--------------------
+||||||||||epsilon: 0.1635, buffer size: 66971
+||||||||||epsilon: 0.1628, buffer size: 67285
+||||||||||epsilon: 0.1622, buffer size: 67645
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.07183679034735299 || V-Loss: 0.01258906111259885
+---EPOCH-62--------------------
+||||||||||epsilon: 0.1616, buffer size: 67926
+||||||||||epsilon: 0.161, buffer size: 68213
+||||||||||epsilon: 0.1604, buffer size: 68558
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.07126940537674234 || V-Loss: 0.01240362318497443
+---EPOCH-63--------------------
+||||||||||epsilon: 0.1598, buffer size: 68863
+||||||||||epsilon: 0.1592, buffer size: 69175
+||||||||||epsilon: 0.1586, buffer size: 69459
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.07063884031752844 || V-Loss: 0.0121967266857175
+---EPOCH-64--------------------
+||||||||||epsilon: 0.158, buffer size: 69802
+||||||||||epsilon: 0.1574, buffer size: 70162
+||||||||||epsilon: 0.1569, buffer size: 70484
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.0730889588305375 || V-Loss: 0.012220994284363856
+---EPOCH-65--------------------
+||||||||||epsilon: 0.1563, buffer size: 70750
+||||||||||epsilon: 0.1557, buffer size: 71032
+||||||||||epsilon: 0.1552, buffer size: 71364
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.07223628280130581 || V-Loss: 0.012145200299585735
+---EPOCH-66--------------------
+||||||||||epsilon: 0.1546, buffer size: 71718
+||||||||||epsilon: 0.1541, buffer size: 72060
+||||||||||epsilon: 0.1535, buffer size: 72407
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.07441701423305688 || V-Loss: 0.01212612110059459
+---EPOCH-67--------------------
+||||||||||epsilon: 0.153, buffer size: 72694
+||||||||||epsilon: 0.1525, buffer size: 72961
+||||||||||epsilon: 0.152, buffer size: 73322
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.07359327237705614 || V-Loss: 0.011873327144381239
+---EPOCH-68--------------------
+||||||||||epsilon: 0.1514, buffer size: 73704
+||||||||||epsilon: 0.1509, buffer size: 73992
+||||||||||epsilon: 0.1504, buffer size: 74370
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -3. -27.]
+[[ 0 27]
+ [ 3  0]]
+Q-Loss: 0.0669554548874272 || V-Loss: 0.010571238109894868
+---EPOCH-69--------------------
+||||||||||epsilon: 0.1499, buffer size: 74683
+||||||||||epsilon: 0.1494, buffer size: 75070
+||||||||||epsilon: 0.1489, buffer size: 75342
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.0672708894507807 || V-Loss: 0.010444216309716462
+---EPOCH-70--------------------
+||||||||||epsilon: 0.1484, buffer size: 75605
+||||||||||epsilon: 0.148, buffer size: 75962
+||||||||||epsilon: 0.1475, buffer size: 76288
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.06723370596890775 || V-Loss: 0.011035835141960878
+---EPOCH-71--------------------
+||||||||||epsilon: 0.147, buffer size: 76636
+||||||||||epsilon: 0.1465, buffer size: 76921
+||||||||||epsilon: 0.1461, buffer size: 77308
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.06828493297056491 || V-Loss: 0.0108588984647773
+---EPOCH-72--------------------
+||||||||||epsilon: 0.1456, buffer size: 77610
+||||||||||epsilon: 0.1452, buffer size: 77907
+||||||||||epsilon: 0.1447, buffer size: 78233
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.07171399503275516 || V-Loss: 0.010928947149126086
+---EPOCH-73--------------------
+||||||||||epsilon: 0.1443, buffer size: 78597
+||||||||||epsilon: 0.1438, buffer size: 78843
+||||||||||epsilon: 0.1434, buffer size: 79129
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.07217424445043183 || V-Loss: 0.010830369631912815
+---EPOCH-74--------------------
+||||||||||epsilon: 0.143, buffer size: 79421
+||||||||||epsilon: 0.1425, buffer size: 79685
+||||||||||epsilon: 0.1421, buffer size: 79973
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.06818808566770093 || V-Loss: 0.01054495189492491
+---EPOCH-75--------------------
+||||||||||epsilon: 0.1417, buffer size: 80272
+||||||||||epsilon: 0.1413, buffer size: 80576
+||||||||||epsilon: 0.1409, buffer size: 80905
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.06778573830832993 || V-Loss: 0.010482396782963886
+---EPOCH-76--------------------
+||||||||||epsilon: 0.1405, buffer size: 81178
+||||||||||epsilon: 0.1401, buffer size: 81497
+||||||||||epsilon: 0.1397, buffer size: 81769
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.06835818283867207 || V-Loss: 0.010446119821501046
+---EPOCH-77--------------------
+||||||||||epsilon: 0.1393, buffer size: 82107
+||||||||||epsilon: 0.1389, buffer size: 82395
+||||||||||epsilon: 0.1385, buffer size: 82654
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.06884058114032889 || V-Loss: 0.010274273420473622
+---EPOCH-78--------------------
+||||||||||epsilon: 0.1381, buffer size: 82955
+||||||||||epsilon: 0.1377, buffer size: 83294
+||||||||||epsilon: 0.1373, buffer size: 83625
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.0691011385293915 || V-Loss: 0.011004898910228983
+---EPOCH-79--------------------
+||||||||||epsilon: 0.137, buffer size: 83978
+||||||||||epsilon: 0.1366, buffer size: 84273
+||||||||||epsilon: 0.1362, buffer size: 84607
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.06862840417659652 || V-Loss: 0.010835432227950246
+---EPOCH-80--------------------
+||||||||||epsilon: 0.1359, buffer size: 84994
+||||||||||epsilon: 0.1355, buffer size: 85305
+||||||||||epsilon: 0.1352, buffer size: 85537
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.0706233157992743 || V-Loss: 0.011148791791233752
+---EPOCH-81--------------------
+||||||||||epsilon: 0.1348, buffer size: 85920
+||||||||||epsilon: 0.1345, buffer size: 86192
+||||||||||epsilon: 0.1341, buffer size: 86560
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.07118704340670688 || V-Loss: 0.011101951335913756
+---EPOCH-82--------------------
+||||||||||epsilon: 0.1338, buffer size: 86866
+||||||||||epsilon: 0.1335, buffer size: 87147
+||||||||||epsilon: 0.1331, buffer size: 87406
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.06985640287922135 || V-Loss: 0.011002397870546899
+---EPOCH-83--------------------
+||||||||||epsilon: 0.1328, buffer size: 87709
+||||||||||epsilon: 0.1325, buffer size: 87937
+||||||||||epsilon: 0.1321, buffer size: 88234
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.07083311121741884 || V-Loss: 0.010990506923687483
+---EPOCH-84--------------------
+||||||||||epsilon: 0.1318, buffer size: 88519
+||||||||||epsilon: 0.1315, buffer size: 88861
+||||||||||epsilon: 0.1312, buffer size: 89118
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.07188347214206457 || V-Loss: 0.011379354648530108
+---EPOCH-85--------------------
+||||||||||epsilon: 0.1309, buffer size: 89506
+||||||||||epsilon: 0.1306, buffer size: 89742
+||||||||||epsilon: 0.1303, buffer size: 90015
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.07249821858385579 || V-Loss: 0.011515153126048748
+---EPOCH-86--------------------
+||||||||||epsilon: 0.13, buffer size: 90271
+||||||||||epsilon: 0.1297, buffer size: 90513
+||||||||||epsilon: 0.1294, buffer size: 90814
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.07176289908191912 || V-Loss: 0.0107681949278144
+---EPOCH-87--------------------
+||||||||||epsilon: 0.1291, buffer size: 91133
+||||||||||epsilon: 0.1288, buffer size: 91382
+||||||||||epsilon: 0.1285, buffer size: 91663
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.07107875283029805 || V-Loss: 0.011008315444402946
+---EPOCH-88--------------------
+||||||||||epsilon: 0.1282, buffer size: 92018
+||||||||||epsilon: 0.1279, buffer size: 92407
+||||||||||epsilon: 0.1277, buffer size: 92713
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.07118326283737339 || V-Loss: 0.010698714036455687
+---EPOCH-89--------------------
+||||||||||epsilon: 0.1274, buffer size: 93037
+||||||||||epsilon: 0.1271, buffer size: 93384
+||||||||||epsilon: 0.1268, buffer size: 93686
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.07135487085663024 || V-Loss: 0.011113400099916973
+---EPOCH-90--------------------
+||||||||||epsilon: 0.1266, buffer size: 94029
+||||||||||epsilon: 0.1263, buffer size: 94335
+||||||||||epsilon: 0.1261, buffer size: 94648
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.07772353000701027 || V-Loss: 0.012312045873931187
+---EPOCH-91--------------------
+||||||||||epsilon: 0.1258, buffer size: 94904
+||||||||||epsilon: 0.1255, buffer size: 95212
+||||||||||epsilon: 0.1253, buffer size: 95505
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.07758957231481825 || V-Loss: 0.011898109237136469
+---EPOCH-92--------------------
+||||||||||epsilon: 0.125, buffer size: 95767
+||||||||||epsilon: 0.1248, buffer size: 96025
+||||||||||epsilon: 0.1245, buffer size: 96397
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-12. -18.]
+[[ 0 18]
+ [12  0]]
+Q-Loss: 0.08305333787159593 || V-Loss: 0.012741885876624
+---EPOCH-93--------------------
+||||||||||epsilon: 0.1243, buffer size: 96646
+||||||||||epsilon: 0.124, buffer size: 96926
+||||||||||epsilon: 0.1238, buffer size: 97195
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.08345991054879615 || V-Loss: 0.012467898550661669
+---EPOCH-94--------------------
+||||||||||epsilon: 0.1236, buffer size: 97495
+||||||||||epsilon: 0.1233, buffer size: 97798
+||||||||||epsilon: 0.1231, buffer size: 98085
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.08929209509047203 || V-Loss: 0.013491807772802863
+---EPOCH-95--------------------
+||||||||||epsilon: 0.1229, buffer size: 98382
+||||||||||epsilon: 0.1226, buffer size: 98666
+||||||||||epsilon: 0.1224, buffer size: 98849
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.08895664691444351 || V-Loss: 0.013994931718034138
+---EPOCH-96--------------------
+||||||||||epsilon: 0.1222, buffer size: 99076
+||||||||||epsilon: 0.122, buffer size: 99421
+||||||||||epsilon: 0.1218, buffer size: 99766
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.08315940755030966 || V-Loss: 0.013370271644505584
+---EPOCH-97--------------------
+||||||||||epsilon: 0.1215, buffer size: 100000
+||||||||||epsilon: 0.1213, buffer size: 100000
+||||||||||epsilon: 0.1211, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -1. -29.]
+[[ 0 29]
+ [ 1  0]]
+Q-Loss: 0.08418862574168898 || V-Loss: 0.013194350628029625
+---EPOCH-98--------------------
+||||||||||epsilon: 0.1209, buffer size: 100000
+||||||||||epsilon: 0.1207, buffer size: 100000
+||||||||||epsilon: 0.1205, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.081361327886643 || V-Loss: 0.012216708230889082
+---EPOCH-99--------------------
+||||||||||epsilon: 0.1203, buffer size: 100000
+||||||||||epsilon: 0.1201, buffer size: 100000
+||||||||||epsilon: 0.1199, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.08068940667039907 || V-Loss: 0.011770542187351046
+---EPOCH-100--------------------
+||||||||||epsilon: 0.1197, buffer size: 100000
+||||||||||epsilon: 0.1195, buffer size: 100000
+||||||||||epsilon: 0.1193, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.08310914192597084 || V-Loss: 0.012445796645556874
+---EPOCH-101--------------------
+||||||||||epsilon: 0.1191, buffer size: 100000
+||||||||||epsilon: 0.1189, buffer size: 100000
+||||||||||epsilon: 0.1187, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.08436918288584071 || V-Loss: 0.012953808127233426
+---EPOCH-102--------------------
+||||||||||epsilon: 0.1185, buffer size: 100000
+||||||||||epsilon: 0.1184, buffer size: 100000
+||||||||||epsilon: 0.1182, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.07939886908314925 || V-Loss: 0.012042013791933133
+---EPOCH-103--------------------
+||||||||||epsilon: 0.118, buffer size: 100000
+||||||||||epsilon: 0.1178, buffer size: 100000
+||||||||||epsilon: 0.1176, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.07896126093414686 || V-Loss: 0.011726651948538551
+---EPOCH-104--------------------
+||||||||||epsilon: 0.1175, buffer size: 100000
+||||||||||epsilon: 0.1173, buffer size: 100000
+||||||||||epsilon: 0.1171, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.08417750434786118 || V-Loss: 0.012456708201963132
+---EPOCH-105--------------------
+||||||||||epsilon: 0.1169, buffer size: 100000
+||||||||||epsilon: 0.1168, buffer size: 100000
+||||||||||epsilon: 0.1166, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.08395635433575153 || V-Loss: 0.012601370416251166
+---EPOCH-106--------------------
+||||||||||epsilon: 0.1164, buffer size: 100000
+||||||||||epsilon: 0.1163, buffer size: 100000
+||||||||||epsilon: 0.1161, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.08234353717824054 || V-Loss: 0.011948952189151627
+---EPOCH-107--------------------
+||||||||||epsilon: 0.116, buffer size: 100000
+||||||||||epsilon: 0.1158, buffer size: 100000
+||||||||||epsilon: 0.1156, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.0815759956327488 || V-Loss: 0.012268633817041144
+---EPOCH-108--------------------
+||||||||||epsilon: 0.1155, buffer size: 100000
+||||||||||epsilon: 0.1153, buffer size: 100000
+||||||||||epsilon: 0.1152, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.08063940007541631 || V-Loss: 0.012702113401044048
+---EPOCH-109--------------------
+||||||||||epsilon: 0.115, buffer size: 100000
+||||||||||epsilon: 0.1149, buffer size: 100000
+||||||||||epsilon: 0.1147, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.07980954202773226 || V-Loss: 0.012199416321968758
+---EPOCH-110--------------------
+||||||||||epsilon: 0.1146, buffer size: 100000
+||||||||||epsilon: 0.1144, buffer size: 100000
+||||||||||epsilon: 0.1143, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.08022920524725448 || V-Loss: 0.012106302782369556
+---EPOCH-111--------------------
+||||||||||epsilon: 0.1142, buffer size: 100000
+||||||||||epsilon: 0.114, buffer size: 100000
+||||||||||epsilon: 0.1139, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-14. -16.]
+[[ 0 16]
+ [14  0]]
+Q-Loss: 0.08022636601978787 || V-Loss: 0.012202541131347885
+---EPOCH-112--------------------
+||||||||||epsilon: 0.1137, buffer size: 100000
+||||||||||epsilon: 0.1136, buffer size: 100000
+||||||||||epsilon: 0.1135, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.07463398203959963 || V-Loss: 0.011281515281841667
+---EPOCH-113--------------------
+||||||||||epsilon: 0.1133, buffer size: 100000
+||||||||||epsilon: 0.1132, buffer size: 100000
+||||||||||epsilon: 0.1131, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.07307047926196553 || V-Loss: 0.011348887933559555
+---EPOCH-114--------------------
+||||||||||epsilon: 0.1129, buffer size: 100000
+||||||||||epsilon: 0.1128, buffer size: 100000
+||||||||||epsilon: 0.1127, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -3. -27.]
+[[ 0 27]
+ [ 3  0]]
+Q-Loss: 0.06733868093755369 || V-Loss: 0.01083680551709937
+---EPOCH-115--------------------
+||||||||||epsilon: 0.1126, buffer size: 100000
+||||||||||epsilon: 0.1124, buffer size: 100000
+||||||||||epsilon: 0.1123, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.06723695239297764 || V-Loss: 0.010684186334836981
+---EPOCH-116--------------------
+||||||||||epsilon: 0.1122, buffer size: 100000
+||||||||||epsilon: 0.1121, buffer size: 100000
+||||||||||epsilon: 0.1119, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.06905201289720705 || V-Loss: 0.011113407972766175
+---EPOCH-117--------------------
+||||||||||epsilon: 0.1118, buffer size: 100000
+||||||||||epsilon: 0.1117, buffer size: 100000
+||||||||||epsilon: 0.1116, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.06868378013674897 || V-Loss: 0.011086199913944045
+---EPOCH-118--------------------
+||||||||||epsilon: 0.1115, buffer size: 100000
+||||||||||epsilon: 0.1114, buffer size: 100000
+||||||||||epsilon: 0.1112, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.06338556075105353 || V-Loss: 0.010496807193347047
+---EPOCH-119--------------------
+||||||||||epsilon: 0.1111, buffer size: 100000
+||||||||||epsilon: 0.111, buffer size: 100000
+||||||||||epsilon: 0.1109, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.06355833878490343 || V-Loss: 0.01069475845025391
+---EPOCH-120--------------------
+||||||||||epsilon: 0.1108, buffer size: 100000
+||||||||||epsilon: 0.1107, buffer size: 100000
+||||||||||epsilon: 0.1106, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.06578609852180224 || V-Loss: 0.010780990113929063
+---EPOCH-121--------------------
+||||||||||epsilon: 0.1105, buffer size: 100000
+||||||||||epsilon: 0.1104, buffer size: 100000
+||||||||||epsilon: 0.1103, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.06615009633530812 || V-Loss: 0.011380128417916108
+---EPOCH-122--------------------
+||||||||||epsilon: 0.1102, buffer size: 100000
+||||||||||epsilon: 0.1101, buffer size: 100000
+||||||||||epsilon: 0.11, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.056152108918561025 || V-Loss: 0.00994659671018049
+---EPOCH-123--------------------
+||||||||||epsilon: 0.1099, buffer size: 100000
+||||||||||epsilon: 0.1098, buffer size: 100000
+||||||||||epsilon: 0.1097, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.05686148865380836 || V-Loss: 0.010085700527145091
+---EPOCH-124--------------------
+||||||||||epsilon: 0.1096, buffer size: 100000
+||||||||||epsilon: 0.1095, buffer size: 100000
+||||||||||epsilon: 0.1094, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.05496208776399443 || V-Loss: 0.010022281100853694
+---EPOCH-125--------------------
+||||||||||epsilon: 0.1093, buffer size: 100000
+||||||||||epsilon: 0.1092, buffer size: 100000
+||||||||||epsilon: 0.1091, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.05423123412153447 || V-Loss: 0.010071114018267454
+---EPOCH-126--------------------
+||||||||||epsilon: 0.109, buffer size: 100000
+||||||||||epsilon: 0.1089, buffer size: 100000
+||||||||||epsilon: 0.1088, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -2. -28.]
+[[ 0 28]
+ [ 2  0]]
+Q-Loss: 0.05091326020245036 || V-Loss: 0.009211027159169098
+---EPOCH-127--------------------
+||||||||||epsilon: 0.1088, buffer size: 100000
+||||||||||epsilon: 0.1087, buffer size: 100000
+||||||||||epsilon: 0.1086, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -4. -26.]
+[[ 0 26]
+ [ 4  0]]
+Q-Loss: 0.05040906311678572 || V-Loss: 0.009268976171092302
+---EPOCH-128--------------------
+||||||||||epsilon: 0.1085, buffer size: 100000
+||||||||||epsilon: 0.1084, buffer size: 100000
+||||||||||epsilon: 0.1083, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.048995191260687625 || V-Loss: 0.009470239158153962
+---EPOCH-129--------------------
+||||||||||epsilon: 0.1082, buffer size: 100000
+||||||||||epsilon: 0.1082, buffer size: 100000
+||||||||||epsilon: 0.1081, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.04852682335965213 || V-Loss: 0.009489740268228627
+---EPOCH-130--------------------
+||||||||||epsilon: 0.108, buffer size: 100000
+||||||||||epsilon: 0.1079, buffer size: 100000
+||||||||||epsilon: 0.1078, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -2. -28.]
+[[ 0 28]
+ [ 2  0]]
+Q-Loss: 0.04590688917159954 || V-Loss: 0.009020085923239923
+---EPOCH-131--------------------
+||||||||||epsilon: 0.1078, buffer size: 100000
+||||||||||epsilon: 0.1077, buffer size: 100000
+||||||||||epsilon: 0.1076, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -3. -27.]
+[[ 0 27]
+ [ 3  0]]
+Q-Loss: 0.045599399265577 || V-Loss: 0.008908285210574324
+---EPOCH-132--------------------
+||||||||||epsilon: 0.1075, buffer size: 100000
+||||||||||epsilon: 0.1075, buffer size: 100000
+||||||||||epsilon: 0.1074, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.04728260111716604 || V-Loss: 0.008899093056385662
+---EPOCH-133--------------------
+||||||||||epsilon: 0.1073, buffer size: 100000
+||||||||||epsilon: 0.1072, buffer size: 100000
+||||||||||epsilon: 0.1072, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.04696274577844432 || V-Loss: 0.008855593176785758
+---EPOCH-134--------------------
+||||||||||epsilon: 0.1071, buffer size: 100000
+||||||||||epsilon: 0.107, buffer size: 100000
+||||||||||epsilon: 0.107, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -3. -27.]
+[[ 0 27]
+ [ 3  0]]
+Q-Loss: 0.04704441167533463 || V-Loss: 0.008735043221956423
+---EPOCH-135--------------------
+||||||||||epsilon: 0.1069, buffer size: 100000
+||||||||||epsilon: 0.1068, buffer size: 100000
+||||||||||epsilon: 0.1067, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.0459621809206612 || V-Loss: 0.008584830240610058
+---EPOCH-136--------------------
+||||||||||epsilon: 0.1067, buffer size: 100000
+||||||||||epsilon: 0.1066, buffer size: 100000
+||||||||||epsilon: 0.1065, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.04841948690078436 || V-Loss: 0.008384664646787863
+---EPOCH-137--------------------
+||||||||||epsilon: 0.1065, buffer size: 100000
+||||||||||epsilon: 0.1064, buffer size: 100000
+||||||||||epsilon: 0.1064, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.048730007737304605 || V-Loss: 0.008657302911745372
+---EPOCH-138--------------------
+||||||||||epsilon: 0.1063, buffer size: 100000
+||||||||||epsilon: 0.1062, buffer size: 100000
+||||||||||epsilon: 0.1062, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-15. -15.]
+[[ 0 15]
+ [15  0]]
+Q-Loss: 0.04489115067903012 || V-Loss: 0.008276730013682877
+---EPOCH-139--------------------
+||||||||||epsilon: 0.1061, buffer size: 100000
+||||||||||epsilon: 0.106, buffer size: 100000
+||||||||||epsilon: 0.106, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -3. -27.]
+[[ 0 27]
+ [ 3  0]]
+Q-Loss: 0.0448038412661034 || V-Loss: 0.008194113806876542
+---EPOCH-140--------------------
+||||||||||epsilon: 0.1059, buffer size: 100000
+||||||||||epsilon: 0.1059, buffer size: 100000
+||||||||||epsilon: 0.1058, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.04439620380217575 || V-Loss: 0.008542063358723035
+---EPOCH-141--------------------
+||||||||||epsilon: 0.1058, buffer size: 100000
+||||||||||epsilon: 0.1057, buffer size: 100000
+||||||||||epsilon: 0.1056, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-11. -19.]
+[[ 0 19]
+ [11  0]]
+Q-Loss: 0.043963586329372584 || V-Loss: 0.008196964682756136
+---EPOCH-142--------------------
+||||||||||epsilon: 0.1056, buffer size: 100000
+||||||||||epsilon: 0.1055, buffer size: 100000
+||||||||||epsilon: 0.1055, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.043716343981422774 || V-Loss: 0.008228346575673668
+---EPOCH-143--------------------
+||||||||||epsilon: 0.1054, buffer size: 100000
+||||||||||epsilon: 0.1054, buffer size: 100000
+||||||||||epsilon: 0.1053, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.04418391157494912 || V-Loss: 0.008230598031146697
+---EPOCH-144--------------------
+||||||||||epsilon: 0.1053, buffer size: 100000
+||||||||||epsilon: 0.1052, buffer size: 100000
+||||||||||epsilon: 0.1052, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.04579137623318479 || V-Loss: 0.008497853306392715
+---EPOCH-145--------------------
+||||||||||epsilon: 0.1051, buffer size: 100000
+||||||||||epsilon: 0.105, buffer size: 100000
+||||||||||epsilon: 0.105, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.0461183971551237 || V-Loss: 0.008206031095676648
+---EPOCH-146--------------------
+||||||||||epsilon: 0.1049, buffer size: 100000
+||||||||||epsilon: 0.1049, buffer size: 100000
+||||||||||epsilon: 0.1049, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.04676876670117712 || V-Loss: 0.008623066943466217
+---EPOCH-147--------------------
+||||||||||epsilon: 0.1048, buffer size: 100000
+||||||||||epsilon: 0.1048, buffer size: 100000
+||||||||||epsilon: 0.1047, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.046230135037975094 || V-Loss: 0.008579450271789708
+---EPOCH-148--------------------
+||||||||||epsilon: 0.1047, buffer size: 100000
+||||||||||epsilon: 0.1046, buffer size: 100000
+||||||||||epsilon: 0.1046, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.05130792657468437 || V-Loss: 0.00916480117483402
+---EPOCH-149--------------------
+||||||||||epsilon: 0.1045, buffer size: 100000
+||||||||||epsilon: 0.1045, buffer size: 100000
+||||||||||epsilon: 0.1044, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -3. -27.]
+[[ 0 27]
+ [ 3  0]]
+Q-Loss: 0.050908544874535167 || V-Loss: 0.00951846450513516
+---EPOCH-150--------------------
+||||||||||epsilon: 0.1044, buffer size: 100000
+||||||||||epsilon: 0.1043, buffer size: 100000
+||||||||||epsilon: 0.1043, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[-10. -20.]
+[[ 0 20]
+ [10  0]]
+Q-Loss: 0.054403954281694124 || V-Loss: 0.009156192471188398
+---EPOCH-151--------------------
+||||||||||epsilon: 0.1043, buffer size: 100000
+||||||||||epsilon: 0.1042, buffer size: 100000
+||||||||||epsilon: 0.1042, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -8. -22.]
+[[ 0 22]
+ [ 8  0]]
+Q-Loss: 0.05421666320921344 || V-Loss: 0.009326378082729542
+---EPOCH-152--------------------
+||||||||||epsilon: 0.1041, buffer size: 100000
+||||||||||epsilon: 0.1041, buffer size: 100000
+||||||||||epsilon: 0.1041, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.0553065849870164 || V-Loss: 0.009261294611854955
+---EPOCH-153--------------------
+||||||||||epsilon: 0.104, buffer size: 100000
+||||||||||epsilon: 0.104, buffer size: 100000
+||||||||||epsilon: 0.1039, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.05513931938219484 || V-Loss: 0.009789379454266613
+---EPOCH-154--------------------
+||||||||||epsilon: 0.1039, buffer size: 100000
+||||||||||epsilon: 0.1039, buffer size: 100000
+||||||||||epsilon: 0.1038, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -9. -21.]
+[[ 0 21]
+ [ 9  0]]
+Q-Loss: 0.0550776439385577 || V-Loss: 0.010186747146140757
+---EPOCH-155--------------------
+||||||||||epsilon: 0.1038, buffer size: 100000
+||||||||||epsilon: 0.1037, buffer size: 100000
+||||||||||epsilon: 0.1037, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.055588094385831725 || V-Loss: 0.009856473669850142
+---EPOCH-156--------------------
+||||||||||epsilon: 0.1037, buffer size: 100000
+||||||||||epsilon: 0.1036, buffer size: 100000
+||||||||||epsilon: 0.1036, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -6. -24.]
+[[ 0 24]
+ [ 6  0]]
+Q-Loss: 0.06098591652437206 || V-Loss: 0.011062951421793303
+---EPOCH-157--------------------
+||||||||||epsilon: 0.1036, buffer size: 100000
+||||||||||epsilon: 0.1035, buffer size: 100000
+||||||||||epsilon: 0.1035, buffer size: 100000
+Target updated!
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -5. -25.]
+[[ 0 25]
+ [ 5  0]]
+Q-Loss: 0.06017591716941043 || V-Loss: 0.011094685123940852
+---EPOCH-158--------------------
+||||||||||epsilon: 0.1035, buffer size: 100000
+||||||||||epsilon: 0.1034, buffer size: 100000
+||||||||||epsilon: 0.1034, buffer size: 100000
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[ -7. -23.]
+[[ 0 23]
+ [ 7  0]]
+Q-Loss: 0.060831647732777966 || V-Loss: 0.010608956041795403
+---EPOCH-159--------------------
+||||||||||epsilon: 0.1034, buffer size: 100000
+||||||

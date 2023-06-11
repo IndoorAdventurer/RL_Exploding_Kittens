@@ -524,9 +524,9 @@ class EKGame:
         others_mask = history[:, EKActionVecDefs.PLAYER] != 1
         defuse_mask = history[:, EKActionVecDefs.DEFUSE_KITTEN] == 1
         favor_mask = history[:, EKActionVecDefs.PLAY_FAVOR] == 1
-        future_mask = (history[:, EKActionVecDefs.FUTURE_1 != 0]) | \
-                      (history[:, EKActionVecDefs.FUTURE_2 != 0]) | \
-                      (history[:, EKActionVecDefs.FUTURE_3 != 0])
+        future_mask = (history[:, EKActionVecDefs.FUTURE_1] != 1) | \
+                      (history[:, EKActionVecDefs.FUTURE_2] != 1) | \
+                      (history[:, EKActionVecDefs.FUTURE_3] != 1)
         history[others_mask & defuse_mask, EKActionVecDefs.POINTER] = 0
         history[others_mask & favor_mask, EKActionVecDefs.TARGET_CARD] = 0
         history[others_mask & future_mask, EKActionVecDefs.FUTURE_1:] = 0
