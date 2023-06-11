@@ -155,7 +155,7 @@ class EKAgent(abc.ABC):
             [EKActionVecDefs.FUTURE_1,
             EKActionVecDefs.FUTURE_2,
             EKActionVecDefs.FUTURE_3]
-        ] /= EKAgent.MAX_PLAYER_VAL
+        ] /= EKAgent.MAX_CARD_VAL
         return history_copy
 
     def normalize_legal_actions(self, legal_actions: np.ndarray) -> np.ndarray:

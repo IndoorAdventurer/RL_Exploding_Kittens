@@ -506,14 +506,7 @@ class EKGame:
     def player_centric_action_history(self, player: int):
         """ Converts the action history into a player centric form """
 
-        # Filter out all observed futures for other players than current one:
-        future_mask = (
-            (self.action_history[:, EKActionVecDefs.FUTURE_1] == 0) &
-            (self.action_history[:, EKActionVecDefs.FUTURE_2] == 0) &
-            (self.action_history[:, EKActionVecDefs.FUTURE_3] == 0)) | \
-        (self.action_history[:, EKActionVecDefs.PLAYER] == player)
-
-        history = self.action_history[future_mask].copy()
+        history = self.action_history.copy()
 
         # Converting player index to player-centric from
         history[:, EKActionVecDefs.PLAYER] = \
@@ -528,11 +521,15 @@ class EKGame:
                    player + 1, self.num_players)
 
         # Mask everything you should not be allowed to know:
-        other_mask = history[:, EKActionVecDefs.PLAYER] != 1
+        others_mask = history[:, EKActionVecDefs.PLAYER] != 1
         defuse_mask = history[:, EKActionVecDefs.DEFUSE_KITTEN] == 1
         favor_mask = history[:, EKActionVecDefs.PLAY_FAVOR] == 1
-        history[other_mask & defuse_mask, EKActionVecDefs.POINTER] = 0
-        history[other_mask & favor_mask, EKActionVecDefs.TARGET_CARD] = 0
+        future_mask = (history[:, EKActionVecDefs.FUTURE_1 != 0]) | \
+                      (history[:, EKActionVecDefs.FUTURE_2 != 0]) | \
+                      (history[:, EKActionVecDefs.FUTURE_3 != 0])
+        history[others_mask & defuse_mask, EKActionVecDefs.POINTER] = 0
+        history[others_mask & favor_mask, EKActionVecDefs.TARGET_CARD] = 0
+        history[others_mask & future_mask, EKActionVecDefs.FUTURE_1:] = 0
 
         return history
 
